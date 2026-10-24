@@ -4,6 +4,7 @@
 /node_modules
 /.pnp
 .pnp.*
+.pnpm-store/
 .yarn/*
 !.yarn/patches
 !.yarn/plugins
@@ -19,9 +20,16 @@
 
 # production
 /build
+/dist/
 
 # misc
 .DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# secrets
 *.pem
 
 # debug
@@ -29,9 +37,14 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+*.log
+.eslintcache
+.cache/
 
-# env files (can opt-in for committing if needed)
+# environment variables (keep .env.example tracked)
+.env
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -39,3 +52,25 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# serwist / pwa generated service worker bundles (source lives in app/sw.ts)
+/public/sw.js
+/public/sw.js.map
+/public/swe-worker-*.js
+/public/swe-worker-*.js.map
+/public/workbox-*.js
+/public/workbox-*.js.map
+
+# testing, coverage & bundle analyzer reports
+/coverage/
+*.lcov
+/.nyc_output
+/analyze/
+
+# docker local data
+docker-data/
+postgres-data/
+
+# local database data
+*.db
+*.sqlite
