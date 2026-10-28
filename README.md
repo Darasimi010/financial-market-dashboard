@@ -1,4 +1,4 @@
-# Finnhub Market Dashboard (MarketDash)
+# Market Dashboard with Finnhub API (MarketDash)
 
 A Progressive Web App (PWA) for tracking US stock market data using the **Finnhub Free REST API**. Built as a non-commercial portfolio project targeting **Vercel (Hobby plan)** with local Docker development and GitHub Actions CI.
 
@@ -9,6 +9,7 @@ A Progressive Web App (PWA) for tracking US stock market data using the **Finnhu
 **MarketDash** lets investors and engineers inspect real-time US equity quotes, explore interactive OHLCV candlestick and area charts, maintain a persistent local watchlist, review company fundamentals, analyst recommendation consensus, quarterly EPS surprises, and read real-time financial news—all without creating an account or exposing API credentials to the browser.
 
 ### Highlights
+
 - **Zero Client Secret Exposure:** Every Finnhub call goes through Next.js App Router route handlers (`/app/api/*`). `FINNHUB_API_KEY` stays strictly server-side.
 - **Rate-Limit Resilience:** Single-source rate-limit config (`lib/config.ts`) paired with per-endpoint server TTL caching, in-flight request deduplication, jittered exponential backoff on HTTP `429`, and visibility-aware 30-second client polling.
 - **Runtime Schema Safety:** All upstream Finnhub payloads are validated at runtime with **Zod** before reaching React components.
@@ -20,9 +21,11 @@ A Progressive Web App (PWA) for tracking US stock market data using the **Finnhu
 ## The Problem & The Solution
 
 ### Problem
+
 Directly consuming third-party market APIs from a SPA exposes private API keys in browser DevTools, hits free-tier rate limits (`429`) when multiple components mount simultaneously, crashes when upstream JSON fields change or return `null`, and fails blankly when mobile connectivity drops.
 
 ### Solution
+
 1. **Server Proxy Layer (`/app/api/*`):** Injects the Finnhub token server-side, normalizes errors into human-readable messages, and strips upstream stack traces.
 2. **Deduplicated In-Memory Cache (`lib/finnhub/client.ts`):** Pools identical concurrent requests into a single promise and caches responses per endpoint TTL (quotes `30s`, market status `60s`, news `10m`, metrics/earnings `6h`, company profile `24h`).
 3. **Resilient Offline Strategy:** Combines **Serwist** service-worker caching with `localStorage` quote snapshots so users see their most recent quotes with a clear offline indicator when disconnected.
@@ -42,19 +45,19 @@ Directly consuming third-party market APIs from a SPA exposes private API keys i
    - News Sentiment & Social Sentiment (`/news-sentiment`, `/stock/social-sentiment`)
    - Press Releases & Earnings Call Transcripts (`/press-releases`, `/stock/transcripts`)
    - Non-US Exchange Candles, Tick/NBBO Data, ETF/Mutual Fund Holdings, Bonds & Economic Data
-   - *(Note: Where `/stock/candle` is restricted on certain free keys with `403`, `/api/candle` gracefully synthesizes a daily trend curve anchored to the live `/quote` endpoint so charts remain interactive.)*
+   - _(Note: Where `/stock/candle` is restricted on certain free keys with `403`, `/api/candle` gracefully synthesizes a daily trend curve anchored to the live `/quote` endpoint so charts remain interactive.)_
 
 ---
 
 ## Tradeoffs & Architectural Decisions
 
-| Decision | Alternative Considered | Reason Chosen |
-| --- | --- | --- |
-| **HTTP Polling (30s) + Server Cache** | Browser WebSocket / SSE relay | Prevents token leakage in client WS URLs and works natively on Vercel Hobby serverless functions. |
-| **Serwist (`@serwist/next`)** | Legacy `next-pwa` | `next-pwa` is unmaintained and incompatible with modern Next.js App Router builds; Serwist is actively maintained and lightweight. |
-| **Custom SVG Candlestick/Area Chart** | Heavy charting libraries (e.g. TradingView/ECharts) | Keeps client bundle tiny, zero external runtime dependencies, instant dynamic chunk loading, and crisp dark/light theming. |
-| **`localStorage` Watchlist** | Authenticated cloud DB | Prompt specifies zero user authentication; `localStorage` with multi-tab `storage` event sync gives instant persistence with zero friction. |
-| **Startup Check + Demo Fallback** | Hard crash in all environments | `instrumentation.ts` runs `validateServerEnv()` at boot; setting `STRICT_FINNHUB_KEY=true` enforces a hard startup failure if the key is missing, while unset preview environments gracefully serve deterministic US demo data. |
+| Decision                              | Alternative Considered                              | Reason Chosen                                                                                                                                                                                                                   |
+| ------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **HTTP Polling (30s) + Server Cache** | Browser WebSocket / SSE relay                       | Prevents token leakage in client WS URLs and works natively on Vercel Hobby serverless functions.                                                                                                                               |
+| **Serwist (`@serwist/next`)**         | Legacy `next-pwa`                                   | `next-pwa` is unmaintained and incompatible with modern Next.js App Router builds; Serwist is actively maintained and lightweight.                                                                                              |
+| **Custom SVG Candlestick/Area Chart** | Heavy charting libraries (e.g. TradingView/ECharts) | Keeps client bundle tiny, zero external runtime dependencies, instant dynamic chunk loading, and crisp dark/light theming.                                                                                                      |
+| **`localStorage` Watchlist**          | Authenticated cloud DB                              | Prompt specifies zero user authentication; `localStorage` with multi-tab `storage` event sync gives instant persistence with zero friction.                                                                                     |
+| **Startup Check + Demo Fallback**     | Hard crash in all environments                      | `instrumentation.ts` runs `validateServerEnv()` at boot; setting `STRICT_FINNHUB_KEY=true` enforces a hard startup failure if the key is missing, while unset preview environments gracefully serve deterministic US demo data. |
 
 ---
 
@@ -98,29 +101,33 @@ Directly consuming third-party market APIs from a SPA exposes private API keys i
 
 - **Local Development:** Copy `.env.example` to `.env.local` (git-ignored) and set `FINNHUB_API_KEY="your_key"`.
 - **Strict Startup Check:** Set `STRICT_FINNHUB_KEY="true"` in production if you want the server boot (`instrumentation.ts`) to fail immediately when `FINNHUB_API_KEY` is missing.
-- **GitHub Actions CI:** Add `FINNHUB_API_KEY` under *Repository Settings → Secrets and variables → Actions*.
-- **Vercel Production/Preview:** Add `FINNHUB_API_KEY` under *Vercel Project Settings → Environment Variables*. Never prefix with `NEXT_PUBLIC_`.
+- **GitHub Actions CI:** Add `FINNHUB_API_KEY` under _Repository Settings → Secrets and variables → Actions_.
+- **Vercel Production/Preview:** Add `FINNHUB_API_KEY` under _Vercel Project Settings → Environment Variables_. Never prefix with `NEXT_PUBLIC_`.
 
 ---
 
 ## How to Run Locally
 
 ### Without Docker (pnpm)
+
 ```bash
 pnpm install
 cp .env.example .env.local
 # Edit .env.local and add your FINNHUB_API_KEY
 pnpm run dev
 ```
+
 Open [http://localhost:3000](http://localhost:3000).
 
 ### With Docker Compose (Hot Reload)
+
 ```bash
 cp .env.example .env.local
 docker compose up
 ```
 
 ### Production Standalone Container Test
+
 ```bash
 docker build -t marketdash .
 docker run --rm -p 3000:3000 -e FINNHUB_API_KEY="your_key" marketdash
@@ -152,9 +159,9 @@ pnpm run analyze
 1. **"Market data is temporarily unavailable" (HTTP 401/403):**
    - Check server terminal logs for `[Finnhub Client] Upstream auth error`. Verify `FINNHUB_API_KEY` in `.env.local` has no trailing quotes/spaces and hit `/api/health` to confirm `"hasApiKey": true`.
 2. **"We're fetching data too quickly. Retrying shortly." (HTTP 429):**
-   - Inspect response headers on `/api/quote` in DevTools *Network* tab for `Retry-After`. Ensure you are not running multiple apps sharing the same free Finnhub key simultaneously.
+   - Inspect response headers on `/api/quote` in DevTools _Network_ tab for `Retry-After`. Ensure you are not running multiple apps sharing the same free Finnhub key simultaneously.
 3. **Inspecting the Service Worker & Offline Mode:**
-   - Run a production build (`pnpm run build && pnpm run start`), open Chrome DevTools → *Application* → *Service Workers*, verify `sw.js` is `activated`, check *Cache Storage* (`marketdash-api-swr`), and toggle **Offline** in the *Network* tab to test cached quote fallback and `/~offline`.
+   - Run a production build (`pnpm run build && pnpm run start`), open Chrome DevTools → _Application_ → _Service Workers_, verify `sw.js` is `activated`, check _Cache Storage_ (`marketdash-api-swr`), and toggle **Offline** in the _Network_ tab to test cached quote fallback and `/~offline`.
 
 ---
 
