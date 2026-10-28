@@ -1,0 +1,5 @@
+{
+  "name": "Financial Market Dashboard",
+  "description": "Progressive Web App for tracking US stock market data with live quotes, interactive charts, company profiles, and market news powered by the Finnhub REST API.",
+  "requestFramePermissions": []
+}

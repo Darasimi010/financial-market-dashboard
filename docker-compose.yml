@@ -1,0 +1,23 @@
+services:
+  web:
+    image: node:20-alpine
+    working_dir: /app
+    command: sh -c "corepack enable && pnpm install && pnpm run dev"
+    ports:
+      - "3000:3000"
+    env_file:
+      - path: .env.local
+        required: false
+      - path: .env
+        required: false
+    environment:
+      - NODE_ENV=development
+      - WATCHPACK_POLLING=true
+    volumes:
+      - .:/app
+      - marketdash_node_modules:/app/node_modules
+      - marketdash_next_cache:/app/.next
+
+volumes:
+  marketdash_node_modules:
+  marketdash_next_cache:

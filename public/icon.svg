@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b0f19" />
+      <stop offset="100%" stop-color="#020617" />
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#06b6d4" />
+    </linearGradient>
+    <linearGradient id="candleUp" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+    <linearGradient id="candleDown" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f43f5e" />
+      <stop offset="100%" stop-color="#e11d48" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="12" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)" stroke="#1e293b" stroke-width="8" />
+  
+  <!-- Subtle grid lines -->
+  <line x1="80" y1="140" x2="432" y2="140" stroke="#1e293b" stroke-width="2" stroke-dasharray="4 4" />
+  <line x1="80" y1="230" x2="432" y2="230" stroke="#1e293b" stroke-width="2" stroke-dasharray="4 4" />
+  <line x1="80" y1="320" x2="432" y2="320" stroke="#1e293b" stroke-width="2" stroke-dasharray="4 4" />
+  
+  <!-- Candlestick 1 (up) -->
+  <line x1="130" y1="210" x2="130" y2="380" stroke="#10b981" stroke-width="6" stroke-linecap="round" />
+  <rect x="112" y="250" width="36" height="90" rx="8" fill="url(#candleUp)" />
+
+  <!-- Candlestick 2 (down) -->
+  <line x1="210" y1="200" x2="210" y2="360" stroke="#f43f5e" stroke-width="6" stroke-linecap="round" />
+  <rect x="192" y="240" width="36" height="70" rx="8" fill="url(#candleDown)" />
+
+  <!-- Candlestick 3 (up) -->
+  <line x1="290" y1="140" x2="290" y2="320" stroke="#10b981" stroke-width="6" stroke-linecap="round" />
+  <rect x="272" y="170" width="36" height="110" rx="8" fill="url(#candleUp)" />
+
+  <!-- Candlestick 4 (up tall) -->
+  <line x1="370" y1="90" x2="370" y2="260" stroke="#10b981" stroke-width="6" stroke-linecap="round" />
+  <rect x="352" y="120" width="36" height="100" rx="8" fill="url(#candleUp)" />
+
+  <!-- Dynamic Trend Curve with Glow -->
+  <path d="M 100 330 Q 210 260 290 200 T 430 110" fill="none" stroke="url(#accent)" stroke-width="12" stroke-linecap="round" filter="url(#glow)" />
+  <circle cx="430" cy="110" r="14" fill="#34d399" filter="url(#glow)" />
+  <circle cx="430" cy="110" r="7" fill="#ffffff" />
+</svg>
