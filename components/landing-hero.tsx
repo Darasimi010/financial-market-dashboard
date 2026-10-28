@@ -89,11 +89,6 @@ export function LandingHero() {
             <div className="grid lg:grid-cols-12 gap-12 items-center">
               {/* Copy Column */}
               <motion.div {...fadeUp} className="lg:col-span-7 space-y-6">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-xs font-mono text-emerald-700 dark:text-emerald-400">
-                  <Shield className="w-3.5 h-3.5" />
-                  <span>Finnhub REST API • US Equities Free Tier</span>
-                </div>
-
                 <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.08]">
                   Real-time US market intelligence,{' '}
                   <span className="text-emerald-600 dark:text-emerald-400">
@@ -219,8 +214,8 @@ export function LandingHero() {
               Built around real-world API constraints
             </h2>
             <p className="text-sm text-slate-600 dark:text-slate-400">
-              Free-tier financial APIs enforce strict rate limits and exchange boundaries. MarketDash
-              turns those constraints into predictable, resilient UX.
+              Free-tier financial APIs enforce strict rate limits and exchange boundaries.
+              MarketDash turns those constraints into predictable, resilient UX.
             </p>
           </div>
 
