@@ -17,6 +17,22 @@ export function Skeleton({ className = 'h-6 w-full' }: { className?: string }) {
   );
 }
 
+export function CardSkeleton() {
+  return (
+    <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 p-5 shadow-xs space-y-4">
+      <div className="flex items-center justify-between">
+        <Skeleton className="h-5 w-32" />
+        <Skeleton className="h-4 w-16" />
+      </div>
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-3/4" />
+        <Skeleton className="h-4 w-1/2" />
+      </div>
+    </div>
+  );
+}
+
 export function QuoteCardSkeleton() {
   return (
     <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 p-5 shadow-sm space-y-4">
@@ -89,15 +105,9 @@ export function EmptyState({
 }: EmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center p-8 text-center rounded-xl border border-dashed border-slate-200 dark:border-slate-800 bg-white/30 dark:bg-slate-900/30">
-      <div className="p-3 mb-3 rounded-full bg-slate-100 dark:bg-slate-800/80">
-        {icon}
-      </div>
-      <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-1">
-        {title}
-      </h3>
-      <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm mb-4">
-        {description}
-      </p>
+      <div className="p-3 mb-3 rounded-full bg-slate-100 dark:bg-slate-800/80">{icon}</div>
+      <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-1">{title}</h3>
+      <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm mb-4">{description}</p>
       {actionLabel && onAction && (
         <button
           onClick={onAction}
@@ -123,7 +133,8 @@ export function ErrorState({
   isRetrying = false,
   retryCountdown,
 }: ErrorStateProps) {
-  const isRateLimited = message.includes('fetching data too quickly') || retryCountdown !== undefined;
+  const isRateLimited =
+    message.includes('fetching data too quickly') || retryCountdown !== undefined;
 
   return (
     <div
