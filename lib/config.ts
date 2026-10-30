@@ -27,6 +27,19 @@ export const FINNHUB_CONFIG = {
     peers: 24 * 60 * 60 * 1000,   // 24 hours
     earnings: 6 * 60 * 60 * 1000, // 6 hours
     recommendation: 6 * 60 * 60 * 1000, // 6 hours
+    country: 24 * 60 * 60 * 1000, // 24 hours
+    patents: 12 * 60 * 60 * 1000, // 12 hours
+    visas: 12 * 60 * 60 * 1000,   // 12 hours
+    lobbying: 12 * 60 * 60 * 1000,// 12 hours
+    spending: 12 * 60 * 60 * 1000,// 12 hours
+    crypto: 60 * 60 * 1000,       // 1 hour
+    forex: 60 * 60 * 1000,        // 1 hour
+    calendar: 6 * 60 * 60 * 1000, // 6 hours
+    filings: 2 * 60 * 60 * 1000,  // 2 hours
+    insider: 6 * 60 * 60 * 1000,  // 6 hours
+    financialsReported: 12 * 60 * 60 * 1000, // 12 hours
+    marketHoliday: 24 * 60 * 60 * 1000, // 24 hours
+    stockSymbols: 24 * 60 * 60 * 1000,  // 24 hours
   },
 
   // Client-side polling interval (never exceeds the rate limit)
@@ -38,23 +51,33 @@ export const FINNHUB_CONFIG = {
 
   // Allowed Free Tier Endpoints
   freeEndpoints: [
-    '/search',
-    '/stock/symbol',
-    '/stock/market-status',
-    '/stock/market-holiday',
-    '/stock/profile2',
-    '/news',
-    '/company-news',
-    '/stock/peers',
-    '/stock/metric',
-    '/stock/insider-transactions',
-    '/stock/insider-sentiment',
-    '/calendar/ipo',
-    '/stock/recommendation',
+    '/country',
+    '/stock/uspto-patent',
+    '/stock/visa-application',
+    '/stock/lobbying',
+    '/stock/usa-spending',
+    '/crypto/exchange',
+    '/crypto/symbol',
+    '/forex/exchange',
+    '/forex/symbol',
+    '/quote',
     '/stock/earnings',
     '/calendar/earnings',
-    '/quote',
-    '/stock/candle',
+    '/stock/recommendation',
+    '/calendar/ipo',
+    '/stock/filings',
+    '/stock/financials-reported',
+    '/stock/insider-sentiment',
+    '/stock/insider-transactions',
+    '/stock/metric',
+    '/stock/peers',
+    '/company-news',
+    '/news',
+    '/stock/profile2',
+    '/stock/market-holiday',
+    '/stock/market-status',
+    '/stock/symbol',
+    '/search',
   ],
 
   // Exact error messages as specified in the requirements

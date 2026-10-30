@@ -6,19 +6,48 @@ import {
   FinnhubCandlesSchema,
   FinnhubCompanyProfile2,
   FinnhubCompanyProfile2Schema,
+  FinnhubCountry,
+  FinnhubCountryArraySchema,
+  FinnhubEarningsCalendarItem,
+  FinnhubEarningsCalendarResponseSchema,
   FinnhubEarningsSurprise,
   FinnhubEarningsSurpriseArraySchema,
+  FinnhubExchangesArraySchema,
+  FinnhubFilingItem,
+  FinnhubFilingsArraySchema,
+  FinnhubFinancialsReportedItem,
+  FinnhubFinancialsReportedResponseSchema,
+  FinnhubInsiderSentimentItem,
+  FinnhubInsiderSentimentResponseSchema,
+  FinnhubInsiderTransactionItem,
+  FinnhubInsiderTransactionsResponseSchema,
+  FinnhubIpoItem,
+  FinnhubIpoCalendarResponseSchema,
+  FinnhubLobbyingItem,
+  FinnhubLobbyingResponseSchema,
+  FinnhubMarketHolidayItem,
+  FinnhubMarketHolidayResponseSchema,
   FinnhubMarketStatus,
   FinnhubMarketStatusSchema,
   FinnhubNewsItem,
   FinnhubNewsArraySchema,
+  FinnhubPairSymbol,
+  FinnhubPairSymbolsArraySchema,
+  FinnhubPatentItem,
+  FinnhubPatentsResponseSchema,
   FinnhubPeersSchema,
   FinnhubQuote,
   FinnhubQuoteSchema,
   FinnhubRecommendation,
   FinnhubRecommendationArraySchema,
+  FinnhubSpendingItem,
+  FinnhubSpendingResponseSchema,
+  FinnhubStockSymbolItem,
+  FinnhubStockSymbolsArraySchema,
   FinnhubSymbolLookup,
   FinnhubSymbolLookupSchema,
+  FinnhubVisaItem,
+  FinnhubVisaResponseSchema,
 } from './schemas';
 import { ZodSchema } from 'zod';
 
@@ -103,15 +132,13 @@ async function fetchFinnhubEndpoint<T>(
   // If no API key configured, use high-fidelity mock demo data
   if (!apiKey) {
     const demoData = getDemoFallbackData(endpoint, cleanParams);
-    if (demoData) {
+    if (demoData !== null && demoData !== undefined) {
       const parsed = schema.safeParse(demoData);
       if (parsed.success) {
-        // Cache demo data shortly
         cacheStore.set(cacheKey, { data: parsed.data, expiresAt: now + ttlMs });
         return { data: parsed.data, fromCache: false, isDemo: true };
       }
     }
-    // If no demo fallback is available, return 401 error
     throw new FinnhubApiError(401, 'unauthorized', FINNHUB_CONFIG.errorMessages.unauthorized);
   }
 
@@ -133,7 +160,6 @@ async function fetchFinnhubEndpoint<T>(
           headers: {
             Accept: 'application/json',
           },
-          // Cache control for Next.js fetch
           next: { revalidate: Math.floor(ttlMs / 1000) },
         });
 
@@ -144,7 +170,6 @@ async function fetchFinnhubEndpoint<T>(
           
           if (attempt < FINNHUB_CONFIG.rateLimits.maxRetries) {
             attempt++;
-            // Exponential backoff with jitter
             const hasValidRetryHeader =
               retryAfterSec !== undefined && !Number.isNaN(retryAfterSec);
             const baseWait = hasValidRetryHeader
@@ -241,7 +266,7 @@ export const FinnhubClient = {
   },
 
   /**
-   * Search for US stocks with query
+   * Search for US stocks with query (Symbol Lookup)
    */
   async search(query: string): Promise<{ data: FinnhubSymbolLookup; fromCache: boolean; isDemo: boolean }> {
     const cleanQuery = query.trim();
@@ -250,16 +275,53 @@ export const FinnhubClient = {
     }
     return fetchFinnhubEndpoint(
       '/search',
-      { q: cleanQuery, exchange: 'US' },
+      { q: cleanQuery },
       FinnhubSymbolLookupSchema,
       FINNHUB_CONFIG.cacheTTL.search
     );
   },
 
   /**
-   * Get Company Profile 2 (Free tier)
+   * Stock symbols list by exchange
    */
-  async getCompanyProfile(rawSymbol: string): Promise<{ data: FinnhubCompanyProfile2; fromCache: boolean; isDemo: boolean }> {
+  async getStockSymbols(exchange: string = 'US'): Promise<{ data: FinnhubStockSymbolItem[]; fromCache: boolean; isDemo: boolean }> {
+    return fetchFinnhubEndpoint(
+      '/stock/symbol',
+      { exchange },
+      FinnhubStockSymbolsArraySchema,
+      FINNHUB_CONFIG.cacheTTL.stockSymbols
+    );
+  },
+
+  /**
+   * Get Market Status
+   */
+  async getMarketStatus(exchange: string = 'US'): Promise<{ data: FinnhubMarketStatus; fromCache: boolean; isDemo: boolean }> {
+    return fetchFinnhubEndpoint(
+      '/stock/market-status',
+      { exchange },
+      FinnhubMarketStatusSchema,
+      FINNHUB_CONFIG.cacheTTL.marketStatus
+    );
+  },
+
+  /**
+   * Get Market Holidays
+   */
+  async getMarketHolidays(exchange: string = 'US'): Promise<{ data: FinnhubMarketHolidayItem[]; fromCache: boolean; isDemo: boolean }> {
+    const res = await fetchFinnhubEndpoint(
+      '/stock/market-holiday',
+      { exchange },
+      FinnhubMarketHolidayResponseSchema,
+      FINNHUB_CONFIG.cacheTTL.marketHoliday
+    );
+    return { data: res.data.data, fromCache: res.fromCache, isDemo: res.isDemo };
+  },
+
+  /**
+   * Get Company Profile 2
+   */
+  async getCompanyProfile2(rawSymbol: string): Promise<{ data: FinnhubCompanyProfile2; fromCache: boolean; isDemo: boolean }> {
     const symbol = sanitizeSymbol(rawSymbol);
     if (!isUSStockSymbol(symbol)) {
       throw new FinnhubApiError(400, 'invalidSymbol', FINNHUB_CONFIG.errorMessages.notFoundOrNonUS);
@@ -269,18 +331,6 @@ export const FinnhubClient = {
       { symbol },
       FinnhubCompanyProfile2Schema,
       FINNHUB_CONFIG.cacheTTL.profile
-    );
-  },
-
-  /**
-   * Get Market Status for US exchange
-   */
-  async getMarketStatus(exchange: string = 'US'): Promise<{ data: FinnhubMarketStatus; fromCache: boolean; isDemo: boolean }> {
-    return fetchFinnhubEndpoint(
-      '/stock/market-status',
-      { exchange },
-      FinnhubMarketStatusSchema,
-      FINNHUB_CONFIG.cacheTTL.marketStatus
     );
   },
 
@@ -402,6 +452,247 @@ export const FinnhubClient = {
   },
 
   /**
+   * Country List (/country)
+   */
+  async getCountryList(): Promise<{ data: FinnhubCountry[]; fromCache: boolean; isDemo: boolean }> {
+    return fetchFinnhubEndpoint(
+      '/country',
+      {},
+      FinnhubCountryArraySchema,
+      FINNHUB_CONFIG.cacheTTL.country
+    );
+  },
+
+  /**
+   * USPTO Patents (/stock/uspto-patent)
+   */
+  async getPatents(
+    rawSymbol: string,
+    from?: string,
+    to?: string
+  ): Promise<{ data: FinnhubPatentItem[]; fromCache: boolean; isDemo: boolean }> {
+    const symbol = sanitizeSymbol(rawSymbol);
+    if (!isUSStockSymbol(symbol)) {
+      throw new FinnhubApiError(400, 'invalidSymbol', FINNHUB_CONFIG.errorMessages.notFoundOrNonUS);
+    }
+    const res = await fetchFinnhubEndpoint(
+      '/stock/uspto-patent',
+      { symbol, from, to },
+      FinnhubPatentsResponseSchema,
+      FINNHUB_CONFIG.cacheTTL.patents
+    );
+    return { data: res.data.data, fromCache: res.fromCache, isDemo: res.isDemo };
+  },
+
+  /**
+   * Visa Applications (/stock/visa-application)
+   */
+  async getVisaApplications(
+    rawSymbol: string,
+    from?: string,
+    to?: string
+  ): Promise<{ data: FinnhubVisaItem[]; fromCache: boolean; isDemo: boolean }> {
+    const symbol = sanitizeSymbol(rawSymbol);
+    if (!isUSStockSymbol(symbol)) {
+      throw new FinnhubApiError(400, 'invalidSymbol', FINNHUB_CONFIG.errorMessages.notFoundOrNonUS);
+    }
+    const res = await fetchFinnhubEndpoint(
+      '/stock/visa-application',
+      { symbol, from, to },
+      FinnhubVisaResponseSchema,
+      FINNHUB_CONFIG.cacheTTL.visas
+    );
+    return { data: res.data.data, fromCache: res.fromCache, isDemo: res.isDemo };
+  },
+
+  /**
+   * Senate Lobbying (/stock/lobbying)
+   */
+  async getLobbying(
+    rawSymbol: string,
+    from?: string,
+    to?: string
+  ): Promise<{ data: FinnhubLobbyingItem[]; fromCache: boolean; isDemo: boolean }> {
+    const symbol = sanitizeSymbol(rawSymbol);
+    if (!isUSStockSymbol(symbol)) {
+      throw new FinnhubApiError(400, 'invalidSymbol', FINNHUB_CONFIG.errorMessages.notFoundOrNonUS);
+    }
+    const res = await fetchFinnhubEndpoint(
+      '/stock/lobbying',
+      { symbol, from, to },
+      FinnhubLobbyingResponseSchema,
+      FINNHUB_CONFIG.cacheTTL.lobbying
+    );
+    return { data: res.data.data, fromCache: res.fromCache, isDemo: res.isDemo };
+  },
+
+  /**
+   * USA Government Spending (/stock/usa-spending)
+   */
+  async getUsaSpending(
+    rawSymbol: string,
+    from?: string,
+    to?: string
+  ): Promise<{ data: FinnhubSpendingItem[]; fromCache: boolean; isDemo: boolean }> {
+    const symbol = sanitizeSymbol(rawSymbol);
+    if (!isUSStockSymbol(symbol)) {
+      throw new FinnhubApiError(400, 'invalidSymbol', FINNHUB_CONFIG.errorMessages.notFoundOrNonUS);
+    }
+    const res = await fetchFinnhubEndpoint(
+      '/stock/usa-spending',
+      { symbol, from, to },
+      FinnhubSpendingResponseSchema,
+      FINNHUB_CONFIG.cacheTTL.spending
+    );
+    return { data: res.data.data, fromCache: res.fromCache, isDemo: res.isDemo };
+  },
+
+  /**
+   * Crypto Exchanges (/crypto/exchange)
+   */
+  async getCryptoExchanges(): Promise<{ data: string[]; fromCache: boolean; isDemo: boolean }> {
+    return fetchFinnhubEndpoint(
+      '/crypto/exchange',
+      {},
+      FinnhubExchangesArraySchema,
+      FINNHUB_CONFIG.cacheTTL.crypto
+    );
+  },
+
+  /**
+   * Crypto Symbols by Exchange (/crypto/symbol)
+   */
+  async getCryptoSymbols(exchange: string = 'BINANCE'): Promise<{ data: FinnhubPairSymbol[]; fromCache: boolean; isDemo: boolean }> {
+    return fetchFinnhubEndpoint(
+      '/crypto/symbol',
+      { exchange },
+      FinnhubPairSymbolsArraySchema,
+      FINNHUB_CONFIG.cacheTTL.crypto
+    );
+  },
+
+  /**
+   * Forex Exchanges (/forex/exchange)
+   */
+  async getForexExchanges(): Promise<{ data: string[]; fromCache: boolean; isDemo: boolean }> {
+    return fetchFinnhubEndpoint(
+      '/forex/exchange',
+      {},
+      FinnhubExchangesArraySchema,
+      FINNHUB_CONFIG.cacheTTL.forex
+    );
+  },
+
+  /**
+   * Forex Symbols by Exchange (/forex/symbol)
+   */
+  async getForexSymbols(exchange: string = 'oanda'): Promise<{ data: FinnhubPairSymbol[]; fromCache: boolean; isDemo: boolean }> {
+    return fetchFinnhubEndpoint(
+      '/forex/symbol',
+      { exchange },
+      FinnhubPairSymbolsArraySchema,
+      FINNHUB_CONFIG.cacheTTL.forex
+    );
+  },
+
+  /**
+   * Earnings Calendar (/calendar/earnings)
+   */
+  async getEarningsCalendar(from?: string, to?: string): Promise<{ data: FinnhubEarningsCalendarItem[]; fromCache: boolean; isDemo: boolean }> {
+    const res = await fetchFinnhubEndpoint(
+      '/calendar/earnings',
+      { from, to },
+      FinnhubEarningsCalendarResponseSchema,
+      FINNHUB_CONFIG.cacheTTL.calendar
+    );
+    return { data: res.data.earningsCalendar, fromCache: res.fromCache, isDemo: res.isDemo };
+  },
+
+  /**
+   * IPO Calendar (/calendar/ipo)
+   */
+  async getIpoCalendar(from?: string, to?: string): Promise<{ data: FinnhubIpoItem[]; fromCache: boolean; isDemo: boolean }> {
+    const res = await fetchFinnhubEndpoint(
+      '/calendar/ipo',
+      { from, to },
+      FinnhubIpoCalendarResponseSchema,
+      FINNHUB_CONFIG.cacheTTL.calendar
+    );
+    return { data: res.data.ipoCalendar, fromCache: res.fromCache, isDemo: res.isDemo };
+  },
+
+  /**
+   * SEC Filings (/stock/filings)
+   */
+  async getFilings(rawSymbol: string): Promise<{ data: FinnhubFilingItem[]; fromCache: boolean; isDemo: boolean }> {
+    const symbol = sanitizeSymbol(rawSymbol);
+    if (!isUSStockSymbol(symbol)) {
+      throw new FinnhubApiError(400, 'invalidSymbol', FINNHUB_CONFIG.errorMessages.notFoundOrNonUS);
+    }
+    return fetchFinnhubEndpoint(
+      '/stock/filings',
+      { symbol },
+      FinnhubFilingsArraySchema,
+      FINNHUB_CONFIG.cacheTTL.filings
+    );
+  },
+
+  /**
+   * Financials as Reported (/stock/financials-reported)
+   */
+  async getFinancialsReported(rawSymbol: string): Promise<{ data: FinnhubFinancialsReportedItem[]; fromCache: boolean; isDemo: boolean }> {
+    const symbol = sanitizeSymbol(rawSymbol);
+    if (!isUSStockSymbol(symbol)) {
+      throw new FinnhubApiError(400, 'invalidSymbol', FINNHUB_CONFIG.errorMessages.notFoundOrNonUS);
+    }
+    const res = await fetchFinnhubEndpoint(
+      '/stock/financials-reported',
+      { symbol },
+      FinnhubFinancialsReportedResponseSchema,
+      FINNHUB_CONFIG.cacheTTL.financialsReported
+    );
+    return { data: res.data.data, fromCache: res.fromCache, isDemo: res.isDemo };
+  },
+
+  /**
+   * Insider Sentiment (/stock/insider-sentiment)
+   */
+  async getInsiderSentiment(
+    rawSymbol: string,
+    from?: string,
+    to?: string
+  ): Promise<{ data: FinnhubInsiderSentimentItem[]; fromCache: boolean; isDemo: boolean }> {
+    const symbol = sanitizeSymbol(rawSymbol);
+    if (!isUSStockSymbol(symbol)) {
+      throw new FinnhubApiError(400, 'invalidSymbol', FINNHUB_CONFIG.errorMessages.notFoundOrNonUS);
+    }
+    const res = await fetchFinnhubEndpoint(
+      '/stock/insider-sentiment',
+      { symbol, from, to },
+      FinnhubInsiderSentimentResponseSchema,
+      FINNHUB_CONFIG.cacheTTL.insider
+    );
+    return { data: res.data.data, fromCache: res.fromCache, isDemo: res.isDemo };
+  },
+
+  /**
+   * Insider Transactions (/stock/insider-transactions)
+   */
+  async getInsiderTransactions(rawSymbol: string): Promise<{ data: FinnhubInsiderTransactionItem[]; fromCache: boolean; isDemo: boolean }> {
+    const symbol = sanitizeSymbol(rawSymbol);
+    if (!isUSStockSymbol(symbol)) {
+      throw new FinnhubApiError(400, 'invalidSymbol', FINNHUB_CONFIG.errorMessages.notFoundOrNonUS);
+    }
+    const res = await fetchFinnhubEndpoint(
+      '/stock/insider-transactions',
+      { symbol },
+      FinnhubInsiderTransactionsResponseSchema,
+      FINNHUB_CONFIG.cacheTTL.insider
+    );
+    return { data: res.data.data, fromCache: res.fromCache, isDemo: res.isDemo };
+  },
+
+  /**
    * Clear cache (useful for testing)
    */
   clearCache(): void {
@@ -443,64 +734,172 @@ function getDemoFallbackData(endpoint: string, params: Record<string, string>): 
   }
 
   if (endpoint === '/stock/profile2') {
-    const profiles: Record<string, FinnhubCompanyProfile2> = {
-      AAPL: {
-        country: 'US',
-        currency: 'USD',
-        exchange: 'NASDAQ/NMS (GLOBAL MARKET)',
-        ipo: '1980-12-12',
-        marketCapitalization: 3485000,
-        name: 'Apple Inc',
-        phone: '14089961010',
-        shareOutstanding: 15204.14,
-        ticker: 'AAPL',
-        weburl: 'https://www.apple.com/',
-        logo: 'https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/AAPL.png',
-        finnhubIndustry: 'Technology',
-      },
-      MSFT: {
-        country: 'US',
-        currency: 'USD',
-        exchange: 'NASDAQ/NMS (GLOBAL MARKET)',
-        ipo: '1986-03-13',
-        marketCapitalization: 3160000,
-        name: 'Microsoft Corp',
-        phone: '14258828080',
-        shareOutstanding: 7430.40,
-        ticker: 'MSFT',
-        weburl: 'https://www.microsoft.com/',
-        logo: 'https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/MSFT.png',
-        finnhubIndustry: 'Technology',
-      },
-      NVDA: {
-        country: 'US',
-        currency: 'USD',
-        exchange: 'NASDAQ/NMS (GLOBAL MARKET)',
-        ipo: '1999-01-22',
-        marketCapitalization: 3390000,
-        name: 'NVIDIA Corp',
-        phone: '14084862000',
-        shareOutstanding: 24500.00,
-        ticker: 'NVDA',
-        weburl: 'https://www.nvidia.com/',
-        logo: 'https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/NVDA.png',
-        finnhubIndustry: 'Semiconductors',
-      },
-    };
-    return profiles[symbol] || {
+    return {
       country: 'US',
       currency: 'USD',
-      exchange: 'NASDAQ',
-      ipo: '2000-01-01',
-      marketCapitalization: 500000,
-      name: `${symbol} Corporation`,
-      phone: '18005550199',
-      shareOutstanding: 1000,
+      exchange: 'NASDAQ/NMS (GLOBAL MARKET)',
+      ipo: '1980-12-12',
+      marketCapitalization: 3485000,
+      name: `${symbol} Inc`,
+      phone: '14089961010',
+      shareOutstanding: 15204.14,
       ticker: symbol,
       weburl: `https://www.${symbol.toLowerCase()}.com/`,
-      logo: '',
-      finnhubIndustry: 'General Industry',
+      logo: 'https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/AAPL.png',
+      finnhubIndustry: 'Technology',
     };
+  }
+
+  if (endpoint === '/country') {
+    return [
+      { country: 'United States', code2: 'US', code3: 'USA', currency: 'US Dollars', currencyCode: 'USD', region: 'Americas', subRegion: 'Northern America' },
+      { country: 'United Kingdom', code2: 'GB', code3: 'GBR', currency: 'Pounds', currencyCode: 'GBP', region: 'Europe', subRegion: 'Northern Europe' },
+      { country: 'Germany', code2: 'DE', code3: 'DEU', currency: 'Euros', currencyCode: 'EUR', region: 'Europe', subRegion: 'Western Europe' },
+      { country: 'Japan', code2: 'JP', code3: 'JPN', currency: 'Yen', currencyCode: 'JPY', region: 'Asia', subRegion: 'Eastern Asia' },
+    ];
+  }
+
+  if (endpoint === '/crypto/exchange') {
+    return ['BINANCE', 'COINBASE', 'KRAKEN', 'KUCOIN', 'GEMINI', 'BITFINEX'];
+  }
+
+  if (endpoint === '/crypto/symbol') {
+    return [
+      { description: 'Binance BTC/USDT', displaySymbol: 'BTC/USDT', symbol: 'BINANCE:BTCUSDT' },
+      { description: 'Binance ETH/USDT', displaySymbol: 'ETH/USDT', symbol: 'BINANCE:ETHUSDT' },
+      { description: 'Binance SOL/USDT', displaySymbol: 'SOL/USDT', symbol: 'BINANCE:SOLUSDT' },
+    ];
+  }
+
+  if (endpoint === '/forex/exchange') {
+    return ['oanda', 'fxcm', 'forex.com', 'capital', 'pepperstone'];
+  }
+
+  if (endpoint === '/forex/symbol') {
+    return [
+      { description: 'Oanda EUR/USD', displaySymbol: 'EUR/USD', symbol: 'OANDA:EUR_USD' },
+      { description: 'Oanda GBP/USD', displaySymbol: 'GBP/USD', symbol: 'OANDA:GBP_USD' },
+      { description: 'Oanda USD/JPY', displaySymbol: 'USD/JPY', symbol: 'OANDA:USD_JPY' },
+    ];
+  }
+
+  if (endpoint === '/calendar/earnings') {
+    return {
+      earningsCalendar: [
+        { symbol: 'AAPL', date: '2026-10-30', hour: 'amc', quarter: 4, year: 2026, epsEstimate: 1.60, epsActual: 1.64 },
+        { symbol: 'MSFT', date: '2026-10-29', hour: 'amc', quarter: 1, year: 2027, epsEstimate: 3.10, epsActual: 3.18 },
+      ],
+    };
+  }
+
+  if (endpoint === '/calendar/ipo') {
+    return {
+      ipoCalendar: [
+        { date: '2026-11-05', exchange: 'NASDAQ', name: 'Apex Dynamics Inc', numberOfShares: 12000000, price: '22.00', status: 'expected', symbol: 'APXD' },
+        { date: '2026-10-22', exchange: 'NYSE', name: 'Quantum Leap Labs', numberOfShares: 8500000, price: '18.50', status: 'priced', symbol: 'QLL' },
+      ],
+    };
+  }
+
+  if (endpoint === '/stock/filings') {
+    return [
+      { accessNumber: '0001140361-26-040540', symbol, cik: '320193', form: '10-Q', filedDate: '2026-10-20 00:00:00', filingUrl: 'https://www.sec.gov' },
+      { accessNumber: '0001140361-26-030112', symbol, cik: '320193', form: '8-K', filedDate: '2026-09-15 00:00:00', filingUrl: 'https://www.sec.gov' },
+    ];
+  }
+
+  if (endpoint === '/stock/financials-reported') {
+    return {
+      cik: '320193',
+      symbol,
+      data: [
+        {
+          accessNumber: '0000320193-25-000079',
+          symbol,
+          year: 2025,
+          quarter: 4,
+          form: '10-K',
+          report: {
+            bs: [{ label: 'Cash and cash equivalents', value: 29943000000 }],
+            ic: [{ label: 'Total net sales', value: 391035000000 }],
+          },
+        },
+      ],
+    };
+  }
+
+  if (endpoint === '/stock/insider-sentiment') {
+    return {
+      symbol,
+      data: [
+        { symbol, year: 2026, month: 9, change: -45200, mspr: -12.4 },
+        { symbol, year: 2026, month: 8, change: 12400, mspr: 8.6 },
+      ],
+    };
+  }
+
+  if (endpoint === '/stock/insider-transactions') {
+    return {
+      symbol,
+      data: [
+        { name: 'Cook Timothy D', share: 3280000, change: -50000, filingDate: '2026-10-15', transactionDate: '2026-10-14', transactionCode: 'S', transactionPrice: 229.4, symbol },
+      ],
+    };
+  }
+
+  if (endpoint === '/stock/uspto-patent') {
+    return {
+      symbol,
+      data: [
+        { patentNumber: 'US2026029111A1', description: 'Neural network acceleration for spatial computing systems', filingDate: '2026-05-12', patentType: 'Utility' },
+      ],
+    };
+  }
+
+  if (endpoint === '/stock/visa-application') {
+    return {
+      symbol,
+      data: [
+        { year: 2026, quarter: 3, symbol, caseStatus: 'Certified', visaClass: 'H-1B', jobTitle: 'Senior Machine Learning Scientist', wageRangeFrom: 215000, worksiteCity: 'Cupertino', worksiteState: 'CA' },
+      ],
+    };
+  }
+
+  if (endpoint === '/stock/lobbying') {
+    return {
+      symbol,
+      data: [
+        { symbol, year: 2026, period: 'Q2', expenses: 2100000, name: `${symbol} INC` },
+      ],
+    };
+  }
+
+  if (endpoint === '/stock/usa-spending') {
+    return {
+      symbol,
+      data: [
+        { symbol, awardingAgencyName: 'Department of Defense', totalValue: 485000, awardDescription: 'Communication Systems Hardware Support', actionDate: '2026-08-10' },
+      ],
+    };
+  }
+
+  if (endpoint === '/stock/market-holiday') {
+    return {
+      data: [
+        { eventName: 'Thanksgiving Day', atDate: '2026-11-26' },
+        { eventName: 'Christmas Day', atDate: '2026-12-25' },
+        { eventName: "New Year's Day", atDate: '2027-01-01' },
+      ],
+      exchange: 'US',
+    };
+  }
+
+  if (endpoint === '/stock/symbol') {
+    return [
+      { currency: 'USD', description: 'APPLE INC', displaySymbol: 'AAPL', symbol: 'AAPL', type: 'Common Stock' },
+      { currency: 'USD', description: 'MICROSOFT CORP', displaySymbol: 'MSFT', symbol: 'MSFT', type: 'Common Stock' },
+      { currency: 'USD', description: 'NVIDIA CORP', displaySymbol: 'NVDA', symbol: 'NVDA', type: 'Common Stock' },
+    ];
   }
 
   if (endpoint === '/search') {
@@ -515,27 +914,15 @@ function getDemoFallbackData(endpoint: string, params: Record<string, string>): 
       { description: 'META PLATFORMS INC-CLASS A', displaySymbol: 'META', symbol: 'META', type: 'Common Stock' },
     ];
     const filtered = common.filter(s => s.symbol.includes(q) || s.description.includes(q));
-    return {
-      count: filtered.length,
-      result: filtered,
-    };
+    return { count: filtered.length, result: filtered };
   }
 
   if (endpoint === '/stock/market-status') {
-    const now = new Date();
-    const nyTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
-    const hours = nyTime.getHours();
-    const minutes = nyTime.getMinutes();
-    const totalMinutes = hours * 60 + minutes;
-    const isWeekday = nyTime.getDay() >= 1 && nyTime.getDay() <= 5;
-    const isOpen = isWeekday && totalMinutes >= 9 * 60 + 30 && totalMinutes < 16 * 60;
-    const session = !isWeekday ? null : isOpen ? 'regular' : totalMinutes < 9 * 60 + 30 ? 'pre-market' : 'post-market';
-
     return {
       exchange: 'US',
       holiday: null,
-      isOpen,
-      session,
+      isOpen: true,
+      session: 'regular',
       timezone: 'America/New_York',
       t: Math.floor(Date.now() / 1000),
     };
@@ -554,33 +941,10 @@ function getDemoFallbackData(endpoint: string, params: Record<string, string>): 
         summary: 'Major US indices surged during midday trading led by resilient cloud infrastructure demand and semiconductor gains.',
         url: 'https://www.reuters.com',
       },
-      {
-        category: 'technology',
-        datetime: Math.floor(Date.now() / 1000) - 7200,
-        headline: 'Semiconductor Shipments Reach Record High Ahead of Next-Gen Computing Cycles',
-        id: 102,
-        image: 'https://images.unsplash.com/photo-1591488320449-011701bb6704?w=800&auto=format&fit=crop&q=60',
-        related: 'NVDA,AMD',
-        source: 'Bloomberg',
-        summary: 'Global chipmakers report robust order books through the upcoming fiscal quarters, driven by datacenter expansion.',
-        url: 'https://www.bloomberg.com',
-      },
-      {
-        category: 'markets',
-        datetime: Math.floor(Date.now() / 1000) - 14400,
-        headline: 'Federal Reserve Monetary Policy Outlook Signals Economic Resilience',
-        id: 103,
-        image: 'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=800&auto=format&fit=crop&q=60',
-        related: 'SPY,QQQ',
-        source: 'CNBC',
-        summary: 'Central bankers highlight stabilizing inflation metrics alongside steady labor market strength in recent addresses.',
-        url: 'https://www.cnbc.com',
-      },
     ];
   }
 
   if (endpoint === '/stock/candle') {
-    // Generate realistic candles
     const count = 30;
     const nowSec = Math.floor(Date.now() / 1000);
     const daySec = 86400;
@@ -610,15 +974,7 @@ function getDemoFallbackData(endpoint: string, params: Record<string, string>): 
       vArr.push(volume);
     }
 
-    return {
-      c: cArr,
-      h: hArr,
-      l: lArr,
-      o: oArr,
-      s: 'ok',
-      t: tArr,
-      v: vArr,
-    };
+    return { c: cArr, h: hArr, l: lArr, o: oArr, s: 'ok', t: tArr, v: vArr };
   }
 
   if (endpoint === '/stock/peers') {
@@ -645,17 +1001,12 @@ function getDemoFallbackData(endpoint: string, params: Record<string, string>): 
   if (endpoint === '/stock/recommendation') {
     return [
       { buy: 28, hold: 10, period: '2026-10-01', sell: 2, strongBuy: 18, strongSell: 0, symbol },
-      { buy: 26, hold: 12, period: '2026-09-01', sell: 2, strongBuy: 17, strongSell: 0, symbol },
-      { buy: 24, hold: 13, period: '2026-08-01', sell: 3, strongBuy: 16, strongSell: 1, symbol },
     ];
   }
 
   if (endpoint === '/stock/earnings') {
     return [
       { actual: 1.64, estimate: 1.60, period: '2026-06-30', quarter: 3, surprise: 0.04, surprisePercent: 2.5, symbol, year: 2026 },
-      { actual: 1.53, estimate: 1.50, period: '2026-03-31', quarter: 2, surprise: 0.03, surprisePercent: 2.0, symbol, year: 2026 },
-      { actual: 2.18, estimate: 2.10, period: '2025-12-31', quarter: 1, surprise: 0.08, surprisePercent: 3.8, symbol, year: 2026 },
-      { actual: 1.46, estimate: 1.39, period: '2025-09-30', quarter: 4, surprise: 0.07, surprisePercent: 5.0, symbol, year: 2025 },
     ];
   }
 

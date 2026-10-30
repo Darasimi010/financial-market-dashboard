@@ -143,3 +143,311 @@ export const FinnhubEarningsSurpriseSchema = z.object({
 });
 export type FinnhubEarningsSurprise = z.infer<typeof FinnhubEarningsSurpriseSchema>;
 export const FinnhubEarningsSurpriseArraySchema = z.array(FinnhubEarningsSurpriseSchema);
+
+/**
+ * Country List schema (/country)
+ */
+export const FinnhubCountrySchema = z.object({
+  code2: z.string().nullable().optional(),
+  code3: z.string().nullable().optional(),
+  codeNo: z.string().nullable().optional(),
+  country: z.string(),
+  currency: z.string().nullable().optional(),
+  currencyCode: z.string().nullable().optional(),
+  region: z.string().nullable().optional(),
+  subRegion: z.string().nullable().optional(),
+  rating: z.string().nullable().optional(),
+  defaultSpread: z.number().nullable().optional(),
+  countryRiskPremium: z.number().nullable().optional(),
+  equityRiskPremium: z.number().nullable().optional(),
+  logo: z.string().nullable().optional(),
+});
+export type FinnhubCountry = z.infer<typeof FinnhubCountrySchema>;
+export const FinnhubCountryArraySchema = z.array(FinnhubCountrySchema);
+
+/**
+ * USPTO Patent schema (/stock/uspto-patent)
+ */
+export const FinnhubPatentItemSchema = z.object({
+  applicationNumber: z.string().optional(),
+  companyFilingName: z.array(z.string()).optional(),
+  description: z.string().optional(),
+  filingDate: z.string().optional(),
+  filingStatus: z.string().optional(),
+  patentNumber: z.string().optional(),
+  patentType: z.string().optional(),
+  publicationDate: z.string().optional(),
+  url: z.string().optional(),
+});
+export type FinnhubPatentItem = z.infer<typeof FinnhubPatentItemSchema>;
+export const FinnhubPatentsResponseSchema = z.object({
+  data: z.array(FinnhubPatentItemSchema).optional().default([]),
+  symbol: z.string().optional(),
+});
+export type FinnhubPatentsResponse = z.infer<typeof FinnhubPatentsResponseSchema>;
+
+/**
+ * Visa Application schema (/stock/visa-application)
+ */
+export const FinnhubVisaItemSchema = z.object({
+  year: z.number().optional(),
+  quarter: z.number().optional(),
+  symbol: z.string().optional(),
+  caseNumber: z.string().optional(),
+  caseStatus: z.string().optional(),
+  receivedDate: z.string().optional(),
+  visaClass: z.string().optional(),
+  jobTitle: z.string().optional(),
+  socCode: z.string().optional(),
+  fullTimePosition: z.string().optional(),
+  beginDate: z.string().optional(),
+  endDate: z.string().optional(),
+  employerName: z.string().optional(),
+  worksiteAddress: z.string().optional(),
+  worksiteCity: z.string().optional(),
+  worksiteCounty: z.string().optional(),
+  worksiteState: z.string().optional(),
+  worksitePostalCode: z.string().optional(),
+  wageRangeFrom: z.number().nullable().optional(),
+  wageRangeTo: z.number().nullable().optional(),
+  wageUnitOfPay: z.string().optional(),
+  wageLevel: z.string().optional(),
+  h1bDependent: z.string().optional(),
+});
+export type FinnhubVisaItem = z.infer<typeof FinnhubVisaItemSchema>;
+export const FinnhubVisaResponseSchema = z.object({
+  data: z.array(FinnhubVisaItemSchema).optional().default([]),
+  symbol: z.string().optional(),
+});
+export type FinnhubVisaResponse = z.infer<typeof FinnhubVisaResponseSchema>;
+
+/**
+ * Senate Lobbying schema (/stock/lobbying)
+ */
+export const FinnhubLobbyingItemSchema = z.object({
+  symbol: z.string().optional(),
+  name: z.string().optional(),
+  description: z.string().optional(),
+  country: z.string().optional(),
+  year: z.number().optional(),
+  period: z.string().optional(),
+  documentUrl: z.string().optional(),
+  income: z.number().nullable().optional(),
+  expenses: z.number().nullable().optional(),
+  postedName: z.string().optional(),
+  date: z.string().optional(),
+  clientId: z.string().optional(),
+  registrantId: z.string().optional(),
+  senateId: z.string().optional(),
+  houseRegistrantId: z.string().optional(),
+});
+export type FinnhubLobbyingItem = z.infer<typeof FinnhubLobbyingItemSchema>;
+export const FinnhubLobbyingResponseSchema = z.object({
+  data: z.array(FinnhubLobbyingItemSchema).optional().default([]),
+  symbol: z.string().optional(),
+});
+export type FinnhubLobbyingResponse = z.infer<typeof FinnhubLobbyingResponseSchema>;
+
+/**
+ * USA Spending schema (/stock/usa-spending)
+ */
+export const FinnhubSpendingItemSchema = z.object({
+  symbol: z.string().optional(),
+  recipientName: z.string().optional(),
+  recipientParentName: z.string().optional(),
+  country: z.string().optional(),
+  totalValue: z.number().nullable().optional(),
+  outlayedAmount: z.number().nullable().optional(),
+  obligatedAmount: z.number().nullable().optional(),
+  potentialAmount: z.number().nullable().optional(),
+  actionDate: z.string().optional(),
+  performanceStartDate: z.string().optional(),
+  performanceEndDate: z.string().optional(),
+  awardingAgencyName: z.string().optional(),
+  awardingSubAgencyName: z.string().optional(),
+  awardingOfficeName: z.string().optional(),
+  performanceCountry: z.string().optional(),
+  performanceCity: z.string().optional(),
+  performanceCounty: z.string().optional(),
+  performanceState: z.string().optional(),
+  performanceZipCode: z.string().optional(),
+  performanceCongressionalDistrict: z.string().optional(),
+  awardDescription: z.string().optional(),
+  naicsCode: z.string().optional(),
+  permalink: z.string().optional(),
+  lastModifiedDate: z.string().optional(),
+});
+export type FinnhubSpendingItem = z.infer<typeof FinnhubSpendingItemSchema>;
+export const FinnhubSpendingResponseSchema = z.object({
+  data: z.array(FinnhubSpendingItemSchema).optional().default([]),
+  symbol: z.string().optional(),
+});
+export type FinnhubSpendingResponse = z.infer<typeof FinnhubSpendingResponseSchema>;
+
+/**
+ * Crypto & Forex schema
+ */
+export const FinnhubExchangesArraySchema = z.array(z.string());
+
+export const FinnhubPairSymbolSchema = z.object({
+  description: z.string().optional().default(''),
+  displaySymbol: z.string().optional().default(''),
+  symbol: z.string(),
+});
+export type FinnhubPairSymbol = z.infer<typeof FinnhubPairSymbolSchema>;
+export const FinnhubPairSymbolsArraySchema = z.array(FinnhubPairSymbolSchema);
+
+/**
+ * Earnings Calendar schema (/calendar/earnings)
+ */
+export const FinnhubEarningsCalendarItemSchema = z.object({
+  date: z.string().optional(),
+  epsActual: z.number().nullable().optional(),
+  epsEstimate: z.number().nullable().optional(),
+  hour: z.string().optional(),
+  quarter: z.number().optional(),
+  revenueActual: z.number().nullable().optional(),
+  revenueEstimate: z.number().nullable().optional(),
+  symbol: z.string(),
+  year: z.number().optional(),
+});
+export type FinnhubEarningsCalendarItem = z.infer<typeof FinnhubEarningsCalendarItemSchema>;
+export const FinnhubEarningsCalendarResponseSchema = z.object({
+  earningsCalendar: z.array(FinnhubEarningsCalendarItemSchema).optional().default([]),
+});
+export type FinnhubEarningsCalendarResponse = z.infer<typeof FinnhubEarningsCalendarResponseSchema>;
+
+/**
+ * IPO Calendar schema (/calendar/ipo)
+ */
+export const FinnhubIpoItemSchema = z.object({
+  date: z.string().optional(),
+  exchange: z.string().nullable().optional(),
+  name: z.string().nullable().optional(),
+  numberOfShares: z.number().nullable().optional(),
+  price: z.string().nullable().optional(),
+  status: z.string().nullable().optional(),
+  symbol: z.string().nullable().optional(),
+  totalSharesValue: z.number().nullable().optional(),
+});
+export type FinnhubIpoItem = z.infer<typeof FinnhubIpoItemSchema>;
+export const FinnhubIpoCalendarResponseSchema = z.object({
+  ipoCalendar: z.array(FinnhubIpoItemSchema).optional().default([]),
+});
+export type FinnhubIpoCalendarResponse = z.infer<typeof FinnhubIpoCalendarResponseSchema>;
+
+/**
+ * SEC Filings schema (/stock/filings)
+ */
+export const FinnhubFilingItemSchema = z.object({
+  accessNumber: z.string().optional(),
+  symbol: z.string().optional(),
+  cik: z.string().optional(),
+  form: z.string().optional(),
+  filedDate: z.string().optional(),
+  acceptedDate: z.string().optional(),
+  reportUrl: z.string().optional(),
+  filingUrl: z.string().optional(),
+});
+export type FinnhubFilingItem = z.infer<typeof FinnhubFilingItemSchema>;
+export const FinnhubFilingsArraySchema = z.array(FinnhubFilingItemSchema);
+
+/**
+ * Financials As Reported schema (/stock/financials-reported)
+ */
+export const FinnhubFinancialsReportedItemSchema = z.object({
+  accessNumber: z.string().optional(),
+  symbol: z.string().optional(),
+  cik: z.string().optional(),
+  year: z.number().optional(),
+  quarter: z.number().optional(),
+  form: z.string().optional(),
+  startDate: z.string().optional(),
+  endDate: z.string().optional(),
+  filedDate: z.string().optional(),
+  acceptedDate: z.string().optional(),
+  report: z.record(z.string(), z.any()).optional(),
+});
+export type FinnhubFinancialsReportedItem = z.infer<typeof FinnhubFinancialsReportedItemSchema>;
+export const FinnhubFinancialsReportedResponseSchema = z.object({
+  cik: z.string().optional(),
+  data: z.array(FinnhubFinancialsReportedItemSchema).optional().default([]),
+  symbol: z.string().optional(),
+});
+export type FinnhubFinancialsReportedResponse = z.infer<typeof FinnhubFinancialsReportedResponseSchema>;
+
+/**
+ * Insider Sentiment schema (/stock/insider-sentiment)
+ */
+export const FinnhubInsiderSentimentItemSchema = z.object({
+  symbol: z.string().optional(),
+  year: z.number().optional(),
+  month: z.number().optional(),
+  change: z.number().nullable().optional(),
+  mspr: z.number().nullable().optional(),
+});
+export type FinnhubInsiderSentimentItem = z.infer<typeof FinnhubInsiderSentimentItemSchema>;
+export const FinnhubInsiderSentimentResponseSchema = z.object({
+  data: z.array(FinnhubInsiderSentimentItemSchema).optional().default([]),
+  symbol: z.string().optional(),
+});
+export type FinnhubInsiderSentimentResponse = z.infer<typeof FinnhubInsiderSentimentResponseSchema>;
+
+/**
+ * Insider Transactions schema (/stock/insider-transactions)
+ */
+export const FinnhubInsiderTransactionItemSchema = z.object({
+  name: z.string().optional(),
+  share: z.number().nullable().optional(),
+  change: z.number().nullable().optional(),
+  filingDate: z.string().optional(),
+  transactionDate: z.string().optional(),
+  transactionCode: z.string().optional(),
+  transactionPrice: z.number().nullable().optional(),
+  id: z.string().optional(),
+  symbol: z.string().optional(),
+  source: z.string().optional(),
+  isDerivative: z.boolean().optional(),
+  currency: z.string().optional(),
+});
+export type FinnhubInsiderTransactionItem = z.infer<typeof FinnhubInsiderTransactionItemSchema>;
+export const FinnhubInsiderTransactionsResponseSchema = z.object({
+  data: z.array(FinnhubInsiderTransactionItemSchema).optional().default([]),
+  symbol: z.string().optional(),
+});
+export type FinnhubInsiderTransactionsResponse = z.infer<typeof FinnhubInsiderTransactionsResponseSchema>;
+
+/**
+ * Market Holiday schema (/stock/market-holiday)
+ */
+export const FinnhubMarketHolidayItemSchema = z.object({
+  eventName: z.string(),
+  atDate: z.string(),
+  tradingHour: z.string().optional(),
+  postMarket: z.string().optional(),
+});
+export type FinnhubMarketHolidayItem = z.infer<typeof FinnhubMarketHolidayItemSchema>;
+export const FinnhubMarketHolidayResponseSchema = z.object({
+  data: z.array(FinnhubMarketHolidayItemSchema).optional().default([]),
+  exchange: z.string().optional(),
+  timezone: z.string().optional(),
+});
+export type FinnhubMarketHolidayResponse = z.infer<typeof FinnhubMarketHolidayResponseSchema>;
+
+/**
+ * Stock Symbol item schema (/stock/symbol)
+ */
+export const FinnhubStockSymbolItemSchema = z.object({
+  currency: z.string().optional(),
+  description: z.string().optional(),
+  displaySymbol: z.string().optional(),
+  figi: z.string().optional(),
+  isin: z.string().nullable().optional(),
+  mic: z.string().optional(),
+  shareClassFIGI: z.string().optional(),
+  symbol: z.string(),
+  symbol2: z.string().optional(),
+  type: z.string().optional(),
+});
+export type FinnhubStockSymbolItem = z.infer<typeof FinnhubStockSymbolItemSchema>;
+export const FinnhubStockSymbolsArraySchema = z.array(FinnhubStockSymbolItemSchema);

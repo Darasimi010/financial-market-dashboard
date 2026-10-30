@@ -51,12 +51,12 @@ export function PriceChart({ symbol, currentPrice }: PriceChartProps) {
 
         <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
           <a
-            href="https://finnhub.io/pricing"
+            href="https://github.com/Darasimi010"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-semibold shadow-sm transition"
           >
-            <span>Upgrade Finnhub API</span>
+            <span>Contact the developer</span>
           </a>
         </div>
       </div>
