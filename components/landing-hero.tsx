@@ -270,7 +270,7 @@ export function LandingHero() {
 
       <footer className="border-t border-slate-200 dark:border-slate-900 py-6 px-4 sm:px-6 text-xs text-slate-500 dark:text-slate-400">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span>Finnhub Market Dashboard — Non-commercial Portfolio PWA</span>
+          <span>Financial Market Dashboard</span>
           <span className="font-mono text-[11px]">
             US Stocks Only • Powered by Finnhub Free REST API
           </span>
