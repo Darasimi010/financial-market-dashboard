@@ -313,20 +313,6 @@ export const FinnhubClient = {
   },
 
   /**
-   * Stock symbols list by exchange
-   */
-  async getStockSymbols(
-    exchange: string = 'US'
-  ): Promise<{ data: FinnhubStockSymbolItem[]; fromCache: boolean; isDemo: boolean }> {
-    return fetchFinnhubEndpoint(
-      '/stock/symbol',
-      { exchange },
-      FinnhubStockSymbolsArraySchema,
-      FINNHUB_CONFIG.cacheTTL.stockSymbols
-    );
-  },
-
-  /**
    * Get Market Status
    */
   async getMarketStatus(
