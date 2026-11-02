@@ -1,19 +1,29 @@
-import '@testing-library/jest-dom/vitest';
-import { afterAll, afterEach, beforeAll, vi } from 'vitest';
+if (typeof (globalThis as any).setImmediate === 'undefined') {
+  (globalThis as any).setImmediate = (fn: (...args: any[]) => void, ...args: any[]) =>
+    setTimeout(fn, 0, ...args);
+  (globalThis as any).clearImmediate = (id: any) => clearTimeout(id);
+}
+if (typeof (window as any).setImmediate === 'undefined') {
+  (window as any).setImmediate = (globalThis as any).setImmediate;
+  (window as any).clearImmediate = (globalThis as any).clearImmediate;
+}
+
+import '@testing-library/jest-dom/jest-globals';
+// import '@testing-library/jest-dom';
 import { server } from './mocks/server';
 
 // Mock matchMedia for jsdom
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: vi.fn().mockImplementation((query: string) => ({
+  value: jest.fn().mockImplementation((query: string) => ({
     matches: query.includes('dark'),
     media: query,
     onchange: null,
-    addListener: vi.fn(),
-    removeListener: vi.fn(),
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-    dispatchEvent: vi.fn(),
+    addListener: jest.fn(),
+    removeListener: jest.fn(),
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
   })),
 });
 
