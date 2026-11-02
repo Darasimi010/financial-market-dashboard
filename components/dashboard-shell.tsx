@@ -18,9 +18,6 @@ import { InsiderActivityCard } from './insider-activity-card';
 import { GovPatentCard } from './gov-patent-card';
 import { CompanyPeersCard } from './company-peers-card';
 import { MarketCalendarsView } from './market-calendars-view';
-import { ForexCryptoView } from './forex-crypto-view';
-import { CountryListView } from './country-list-view';
-import { StockSymbolsDirectoryView } from './stock-symbols-directory-view';
 import { ChartSkeleton, EmptyState } from './ui-states';
 import { useWatchlist } from '@/hooks/use-watchlist';
 import { FINNHUB_CONFIG, isUSStockSymbol, sanitizeSymbol } from '@/lib/config';
@@ -242,17 +239,6 @@ export function DashboardShell({ initialSymbol }: DashboardShellProps) {
 
           {/* Market Calendars (Earnings, IPO, Holidays) */}
           {activeTab === 'calendars' && <MarketCalendarsView />}
-
-          {/* Forex & Crypto Pairs */}
-          {activeTab === 'forexCrypto' && <ForexCryptoView />}
-
-          {/* Country Intelligence */}
-          {activeTab === 'countries' && <CountryListView />}
-
-          {/* Stock Symbols Directory */}
-          {activeTab === 'symbols' && (
-            <StockSymbolsDirectoryView onSelectSymbol={handleSelectSymbol} />
-          )}
         </main>
       </div>
 

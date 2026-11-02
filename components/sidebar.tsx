@@ -16,7 +16,7 @@ import {
 import { FINNHUB_CONFIG, isUSStockSymbol, sanitizeSymbol } from '@/lib/config';
 import { toast } from 'sonner';
 
-export type DashboardTab = 'overview' | 'watchlist' | 'news' | 'calendars' | 'forexCrypto' | 'countries' | 'symbols';
+export type DashboardTab = 'overview' | 'watchlist' | 'news' | 'calendars';
 
 interface SidebarProps {
   activeTab: DashboardTab;
@@ -60,9 +60,6 @@ export function Sidebar({
     { id: 'watchlist', label: 'Watchlist Grid', icon: <Star className="w-4 h-4" /> },
     { id: 'news', label: 'Market News', icon: <Newspaper className="w-4 h-4" /> },
     { id: 'calendars', label: 'Earnings & IPOs', icon: <Calendar className="w-4 h-4" /> },
-    { id: 'forexCrypto', label: 'Forex & Crypto', icon: <Coins className="w-4 h-4" /> },
-    { id: 'countries', label: 'Global Countries', icon: <Globe className="w-4 h-4" /> },
-    { id: 'symbols', label: 'Symbol Lookup', icon: <Database className="w-4 h-4" /> },
   ];
 
   return (

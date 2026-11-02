@@ -16,9 +16,6 @@ export function BottomNav({ activeTab, onSelectTab }: BottomNavProps) {
     { id: 'watchlist', label: 'Watchlist', icon: <Star className="w-4 h-4" /> },
     { id: 'news', label: 'News', icon: <Newspaper className="w-4 h-4" /> },
     { id: 'calendars', label: 'Calendar', icon: <Calendar className="w-4 h-4" /> },
-    { id: 'forexCrypto', label: 'Crypto/FX', icon: <Coins className="w-4 h-4" /> },
-    { id: 'countries', label: 'Countries', icon: <Globe className="w-4 h-4" /> },
-    { id: 'symbols', label: 'Symbols', icon: <Database className="w-4 h-4" /> },
   ];
 
   return (
