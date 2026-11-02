@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
 import { http, HttpResponse } from 'msw';
 import { server } from './mocks/server';
 import { FinnhubClient, FinnhubApiError } from '@/lib/finnhub/client';

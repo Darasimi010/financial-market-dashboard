@@ -1,15 +1,16 @@
 import React from 'react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, jest } from '@jest/globals';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { server } from './mocks/server';
 import { EmptyState, ErrorState } from '@/components/ui-states';
 import { QuoteCard } from '@/components/quote-card';
 import { saveCachedQuote } from '@/lib/quote-storage';
+import '@testing-library/jest-dom';
 
 describe('UI States & QuoteCard Component', () => {
   it('renders EmptyState with friendly message and triggers next action', () => {
-    const onAction = vi.fn();
+    const onAction = jest.fn();
     render(
       <EmptyState
         title="Your watchlist is empty"
@@ -25,13 +26,8 @@ describe('UI States & QuoteCard Component', () => {
   });
 
   it('renders ErrorState with accessible alert role and Retry button', () => {
-    const onRetry = vi.fn();
-    render(
-      <ErrorState
-        message="Market data is temporarily unavailable"
-        onRetry={onRetry}
-      />
-    );
+    const onRetry = jest.fn();
+    render(<ErrorState message="Market data is temporarily unavailable" onRetry={onRetry} />);
 
     expect(screen.getByRole('alert')).toHaveTextContent('Market data is temporarily unavailable');
     fireEvent.click(screen.getByRole('button', { name: /retry/i }));
@@ -98,11 +94,19 @@ describe('UI States & QuoteCard Component', () => {
       })
     );
 
-    render(<QuoteCard symbol="NVDA" pollingIntervalMs={60000} />);
+    // Mock navigator.onLine as false so QuoteCard detects offline mode across all test runners
+    const originalOnLine = navigator.onLine;
+    Object.defineProperty(navigator, 'onLine', { value: false, configurable: true });
 
-    await waitFor(() => {
-      expect(screen.getByText('$138.85')).toBeInTheDocument();
-    });
-    expect(screen.getByText('Cached')).toBeInTheDocument();
+    try {
+      render(<QuoteCard symbol="NVDA" pollingIntervalMs={60000} />);
+
+      await waitFor(() => {
+        expect(screen.getByText('$138.85')).toBeInTheDocument();
+      });
+      expect(screen.getByText('Cached')).toBeInTheDocument();
+    } finally {
+      Object.defineProperty(navigator, 'onLine', { value: originalOnLine, configurable: true });
+    }
   });
 });

@@ -1,5 +1,5 @@
 import React from 'react';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect } from '@jest/globals';
 import { renderHook, act, render, screen, fireEvent } from '@testing-library/react';
 import { useWatchlist, DEFAULT_WATCHLIST } from '@/hooks/use-watchlist';
 import { ThemeProvider, useTheme } from '@/components/theme-provider';
