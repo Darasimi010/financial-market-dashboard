@@ -145,27 +145,6 @@ export type FinnhubEarningsSurprise = z.infer<typeof FinnhubEarningsSurpriseSche
 export const FinnhubEarningsSurpriseArraySchema = z.array(FinnhubEarningsSurpriseSchema);
 
 /**
- * Country List schema (/country)
- */
-export const FinnhubCountrySchema = z.object({
-  code2: z.string().nullable().optional(),
-  code3: z.string().nullable().optional(),
-  codeNo: z.string().nullable().optional(),
-  country: z.string(),
-  currency: z.string().nullable().optional(),
-  currencyCode: z.string().nullable().optional(),
-  region: z.string().nullable().optional(),
-  subRegion: z.string().nullable().optional(),
-  rating: z.string().nullable().optional(),
-  defaultSpread: z.number().nullable().optional(),
-  countryRiskPremium: z.number().nullable().optional(),
-  equityRiskPremium: z.number().nullable().optional(),
-  logo: z.string().nullable().optional(),
-});
-export type FinnhubCountry = z.infer<typeof FinnhubCountrySchema>;
-export const FinnhubCountryArraySchema = z.array(FinnhubCountrySchema);
-
-/**
  * USPTO Patent schema (/stock/uspto-patent)
  */
 export const FinnhubPatentItemSchema = z.object({
@@ -285,19 +264,6 @@ export const FinnhubSpendingResponseSchema = z.object({
 export type FinnhubSpendingResponse = z.infer<typeof FinnhubSpendingResponseSchema>;
 
 /**
- * Crypto & Forex schema
- */
-export const FinnhubExchangesArraySchema = z.array(z.string());
-
-export const FinnhubPairSymbolSchema = z.object({
-  description: z.string().optional().default(''),
-  displaySymbol: z.string().optional().default(''),
-  symbol: z.string(),
-});
-export type FinnhubPairSymbol = z.infer<typeof FinnhubPairSymbolSchema>;
-export const FinnhubPairSymbolsArraySchema = z.array(FinnhubPairSymbolSchema);
-
-/**
  * Earnings Calendar schema (/calendar/earnings)
  */
 export const FinnhubEarningsCalendarItemSchema = z.object({
@@ -374,7 +340,9 @@ export const FinnhubFinancialsReportedResponseSchema = z.object({
   data: z.array(FinnhubFinancialsReportedItemSchema).optional().default([]),
   symbol: z.string().optional(),
 });
-export type FinnhubFinancialsReportedResponse = z.infer<typeof FinnhubFinancialsReportedResponseSchema>;
+export type FinnhubFinancialsReportedResponse = z.infer<
+  typeof FinnhubFinancialsReportedResponseSchema
+>;
 
 /**
  * Insider Sentiment schema (/stock/insider-sentiment)
@@ -415,7 +383,9 @@ export const FinnhubInsiderTransactionsResponseSchema = z.object({
   data: z.array(FinnhubInsiderTransactionItemSchema).optional().default([]),
   symbol: z.string().optional(),
 });
-export type FinnhubInsiderTransactionsResponse = z.infer<typeof FinnhubInsiderTransactionsResponseSchema>;
+export type FinnhubInsiderTransactionsResponse = z.infer<
+  typeof FinnhubInsiderTransactionsResponseSchema
+>;
 
 /**
  * Market Holiday schema (/stock/market-holiday)
