@@ -22,8 +22,7 @@ export function PriceChart({ symbol, currentPrice }: PriceChartProps) {
             </span>
           </div>
           <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-            Finnhub API endpoint <code className="text-amber-500 font-mono">/stock/candle</code> is
-            restricted to Finnhub Premium subscribers.
+            This API endpoint is restricted to Premium subscribers only.
           </p>
         </div>
         <div className="flex items-center gap-2 text-xs font-semibold text-slate-700 dark:text-slate-300">
