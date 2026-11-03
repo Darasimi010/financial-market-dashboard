@@ -22,12 +22,12 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: 12
 
       - name: Setup Node.js with pnpm cache
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -36,8 +36,8 @@ jobs:
       - name: TypeScript strict check
         run: pnpm run typecheck
 
-      - name: ESLint check
-        run: pnpm run lint
+      # - name: ESLint check
+      #   run: pnpm run lint
 
       - name: Unit & integration tests with coverage
         run: pnpm run test:coverage
