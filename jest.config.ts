@@ -5,21 +5,38 @@ const createJestConfig = nextJest({
   dir: './',
 });
 
-const config: Config = {
-  coverageProvider: 'v8',
+const customConfig: Config = {
   testEnvironment: 'jest-fixed-jsdom',
+  testEnvironmentOptions: {
+    customExportConditions: [''],
+  },
   setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],
   testMatch: ['<rootDir>/tests/**/*.{test,spec}.{ts,tsx}'],
   testPathIgnorePatterns: ['/node_modules/', '/.next/'],
-  collectCoverageFrom: [
-    'lib/**/*.ts',
-    'hooks/**/*.ts',
-    'components/**/*.tsx',
-    'app/api/**/*.ts',
-  ],
+  collectCoverageFrom: ['lib/**/*.ts', 'hooks/**/*.ts', 'components/**/*.tsx', 'app/api/**/*.ts'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
   },
 };
 
-export default createJestConfig(config);
+const esmPackages = [
+  'msw',
+  '@msw',
+  '@mswjs',
+  '@open-draft',
+  'until-async',
+  'strict-event-emitter',
+  'outvariant',
+  'headers-polyfill',
+  'is-node-process',
+  'rettime',
+  'cookie',
+];
+
+export default async (): Promise<Config> => {
+  const config = await createJestConfig(customConfig)();
+  return {
+    ...config,
+    transformIgnorePatterns: [`/node_modules/(?!(?:\\.pnpm/)?(?:${esmPackages.join('|')})[/@+])`],
+  };
+};
