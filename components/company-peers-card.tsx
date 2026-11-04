@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { CardSkeleton, ErrorState } from './ui-states';
-import { Sparkles, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 interface CompanyPeersCardProps {
   symbol: string;
@@ -52,7 +52,6 @@ export function CompanyPeersCard({ symbol, onSelectPeer }: CompanyPeersCardProps
     <div className="rounded-2xl border border-slate-200 dark:border-slate-800/80 bg-white/70 dark:bg-slate-900/60 backdrop-blur-md p-5 shadow-xs transition">
       <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100 dark:border-slate-800/60">
         <div className="flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-emerald-500" />
           <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">
             Industry Peers &amp; Competitors
           </h3>
@@ -81,4 +80,3 @@ export function CompanyPeersCard({ symbol, onSelectPeer }: CompanyPeersCardProps
     </div>
   );
 }
-

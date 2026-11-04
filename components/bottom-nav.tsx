@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { LayoutDashboard, Star, Newspaper, Calendar, Coins, Globe, Database } from 'lucide-react';
+import { LayoutDashboard, Star, Newspaper, Calendar } from 'lucide-react';
 import { DashboardTab } from './sidebar';
 
 interface BottomNavProps {

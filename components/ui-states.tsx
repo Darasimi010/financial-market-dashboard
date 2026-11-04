@@ -3,11 +3,6 @@
 import React from 'react';
 import { AlertCircle, RefreshCw, FolderSearch, Clock } from 'lucide-react';
 
-interface LoadingSkeletonProps {
-  className?: string;
-  count?: number;
-}
-
 export function Skeleton({ className = 'h-6 w-full' }: { className?: string }) {
   return (
     <div

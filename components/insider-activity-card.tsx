@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { FinnhubInsiderTransactionItem, FinnhubInsiderSentimentItem } from '@/lib/finnhub/schemas';
 import { CardSkeleton, ErrorState } from './ui-states';
-import { Users, TrendingDown, TrendingUp, DollarSign } from 'lucide-react';
+import { Users, TrendingDown, TrendingUp } from 'lucide-react';
 
 interface InsiderActivityCardProps {
   symbol: string;
@@ -75,7 +75,9 @@ export function InsiderActivityCard({ symbol }: InsiderActivityCardProps) {
       </div>
 
       {transactions.length === 0 ? (
-        <p className="text-xs text-slate-400 py-3 text-center">No recent insider transactions recorded.</p>
+        <p className="text-xs text-slate-400 py-3 text-center">
+          No recent insider transactions recorded.
+        </p>
       ) : (
         <div className="space-y-2">
           {transactions.slice(0, 5).map((tx, idx) => {
@@ -102,7 +104,11 @@ export function InsiderActivityCard({ symbol }: InsiderActivityCardProps) {
                       isBuy ? 'text-emerald-500' : 'text-rose-500'
                     }`}
                   >
-                    {isBuy ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                    {isBuy ? (
+                      <TrendingUp className="w-3 h-3" />
+                    ) : (
+                      <TrendingDown className="w-3 h-3" />
+                    )}
                     <span>
                       {isBuy ? '+' : ''}
                       {tx.change ? Math.abs(tx.change).toLocaleString() : '0'} shs
@@ -122,4 +128,3 @@ export function InsiderActivityCard({ symbol }: InsiderActivityCardProps) {
     </div>
   );
 }
-

@@ -37,8 +37,6 @@ import {
   FinnhubRecommendationArraySchema,
   FinnhubSpendingItem,
   FinnhubSpendingResponseSchema,
-  FinnhubStockSymbolItem,
-  FinnhubStockSymbolsArraySchema,
   FinnhubSymbolLookup,
   FinnhubSymbolLookupSchema,
   FinnhubVisaItem,

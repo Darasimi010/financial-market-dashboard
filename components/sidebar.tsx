@@ -1,18 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import {
-  LayoutDashboard,
-  Star,
-  Newspaper,
-  Calendar,
-  Coins,
-  Globe,
-  Database,
-  Plus,
-  Trash2,
-  Info,
-} from 'lucide-react';
+import { LayoutDashboard, Star, Newspaper, Calendar, Plus, Trash2, Info } from 'lucide-react';
 import { FINNHUB_CONFIG, isUSStockSymbol, sanitizeSymbol } from '@/lib/config';
 import { toast } from 'sonner';
 

@@ -403,21 +403,3 @@ export const FinnhubMarketHolidayResponseSchema = z.object({
   timezone: z.string().optional(),
 });
 export type FinnhubMarketHolidayResponse = z.infer<typeof FinnhubMarketHolidayResponseSchema>;
-
-/**
- * Stock Symbol item schema (/stock/symbol)
- */
-export const FinnhubStockSymbolItemSchema = z.object({
-  currency: z.string().optional(),
-  description: z.string().optional(),
-  displaySymbol: z.string().optional(),
-  figi: z.string().optional(),
-  isin: z.string().nullable().optional(),
-  mic: z.string().optional(),
-  shareClassFIGI: z.string().optional(),
-  symbol: z.string(),
-  symbol2: z.string().optional(),
-  type: z.string().optional(),
-});
-export type FinnhubStockSymbolItem = z.infer<typeof FinnhubStockSymbolItemSchema>;
-export const FinnhubStockSymbolsArraySchema = z.array(FinnhubStockSymbolItemSchema);

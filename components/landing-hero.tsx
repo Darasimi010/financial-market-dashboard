@@ -1,11 +1,9 @@
 'use client';
 
-import React from 'react';
 import Link from 'next/link';
 import { motion, useReducedMotion } from 'motion/react';
 import {
   ArrowRight,
-  Shield,
   Zap,
   WifiOff,
   BarChart3,
