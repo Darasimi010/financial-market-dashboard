@@ -29,7 +29,7 @@ export function Navbar({ onOpenSearch, showSearch = true }: NavbarProps) {
                 MarketDash
               </span>
               <span className="text-[10px] font-mono text-slate-500 dark:text-slate-400 mt-0.5">
-                US Equities • Free Tier
+                US Stocks • Free
               </span>
             </div>
           </Link>
