@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { CardSkeleton, ErrorState } from './ui-states';
-import { ArrowRight } from 'lucide-react';
 
 interface CompanyPeersCardProps {
   symbol: string;

@@ -1,8 +1,7 @@
 'use client';
 
-import React from 'react';
 import Link from 'next/link';
-import { Search, Sun, Moon, BarChart2, ShieldCheck } from 'lucide-react';
+import { Search, Sun, Moon, BarChart2 } from 'lucide-react';
 import { useTheme } from './theme-provider';
 import { MarketStatusPill } from './market-status-pill';
 import { PWAInstallButton } from './pwa-install-button';
