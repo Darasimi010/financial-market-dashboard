@@ -151,7 +151,7 @@ export function Sidebar({
       <div className="p-3 rounded-xl bg-slate-100/80 dark:bg-slate-900/80 border border-slate-200/70 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 space-y-1">
         <div className="flex items-center gap-1.5 font-semibold text-slate-700 dark:text-slate-300">
           <Info className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-          <span>Finnhub Free Hub</span>
+          <span>Powered by Finnhub APIs</span>
         </div>
         <p className="leading-snug text-[10px]">
           25+ Free Endpoints active • Server caching &amp; deduplication enabled.
