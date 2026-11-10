@@ -33,8 +33,7 @@ export function FinancialsCard({ symbol }: FinancialsCardProps) {
         }
       } catch (err: unknown) {
         if (!cancelled) {
-          const msg =
-            err instanceof Error ? err.message : 'Market data is temporarily unavailable';
+          const msg = err instanceof Error ? err.message : 'Market data is temporarily unavailable';
           setError(msg);
         }
       } finally {
@@ -100,7 +99,6 @@ export function FinancialsCard({ symbol }: FinancialsCardProps) {
             Key Financial Ratios
           </h4>
         </div>
-        <span className="text-[10px] font-mono text-slate-400">Free Tier</span>
       </div>
 
       <div className="grid grid-cols-2 gap-3 text-xs font-mono">

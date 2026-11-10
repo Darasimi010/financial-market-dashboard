@@ -1,11 +1,9 @@
 'use client';
 
-import React from 'react';
 import Link from 'next/link';
 import { motion, useReducedMotion } from 'motion/react';
 import {
   ArrowRight,
-  Shield,
   Zap,
   WifiOff,
   BarChart3,
@@ -29,7 +27,7 @@ const FEATURES = [
     icon: <Lock className="w-5 h-5 text-emerald-500" />,
     title: 'Zero Browser Key Exposure',
     description:
-      'Every Finnhub request routes through Next.js server handlers. Your API token never enters client bundles or network DevTools.',
+      'Every API request routes through Next.js server handlers. The API token never enters client bundles or network DevTools.',
   },
   {
     icon: <Zap className="w-5 h-5 text-emerald-500" />,
@@ -40,7 +38,7 @@ const FEATURES = [
     icon: <Layers className="w-5 h-5 text-emerald-500" />,
     title: 'Runtime Schema Validation',
     description:
-      'Upstream Finnhub payloads are parsed through strict Zod schemas before reaching React components, preventing malformed data crashes.',
+      'Upstream API payloads are parsed through strict Zod schemas before reaching React components, preventing malformed data crashes.',
   },
   {
     icon: <WifiOff className="w-5 h-5 text-emerald-500" />,
@@ -189,14 +187,8 @@ export function LandingHero() {
                   </div>
 
                   {/* Mini Stylized Sparkline */}
-                  <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] font-mono text-slate-400">
+                  <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center text-[11px] font-mono text-slate-400">
                     <span>Cached proxy • 30s poll</span>
-                    <Link
-                      href="/dashboard"
-                      className="text-emerald-600 dark:text-emerald-400 font-semibold hover:underline"
-                    >
-                      Launch live terminal →
-                    </Link>
                   </div>
                 </div>
               </motion.div>
@@ -270,10 +262,8 @@ export function LandingHero() {
 
       <footer className="border-t border-slate-200 dark:border-slate-900 py-6 px-4 sm:px-6 text-xs text-slate-500 dark:text-slate-400">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span>Finnhub Market Dashboard — Non-commercial Portfolio PWA</span>
-          <span className="font-mono text-[11px]">
-            US Stocks Only • Powered by Finnhub Free REST API
-          </span>
+          <span>MarketDash</span>
+          <span className="font-mono text-[11px]">US Stocks • Powered by Finnhub API</span>
         </div>
       </footer>
     </div>

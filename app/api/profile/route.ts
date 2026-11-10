@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
       return handleApiError(new Error('Symbol query parameter is required'));
     }
 
-    const { data, isDemo } = await FinnhubClient.getCompanyProfile(symbol);
+    const { data, isDemo } = await FinnhubClient.getCompanyProfile2(symbol);
     return handleApiSuccess(data, 86400, isDemo);
   } catch (err) {
     return handleApiError(err);

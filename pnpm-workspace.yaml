@@ -4,5 +4,6 @@ allowBuilds:
   protobufjs: true
   re2: true
   unrs-resolver: true
+  '@parcel/watcher': true
 minimumReleaseAgeExclude:
   - '@next/bundle-analyzer@16.4.3'

@@ -12,13 +12,19 @@ import { FinancialsCard } from './financials-card';
 import { AnalystRecommendationsCard } from './analyst-recommendations-card';
 import { EarningsSurprisesCard } from './earnings-surprises-card';
 import { MarketNewsFeed } from './market-news-feed';
+import { SecFilingsCard } from './sec-filings-card';
+import { FinancialsReportedCard } from './financials-reported-card';
+import { InsiderActivityCard } from './insider-activity-card';
+import { GovPatentCard } from './gov-patent-card';
+import { CompanyPeersCard } from './company-peers-card';
+import { MarketCalendarsView } from './market-calendars-view';
 import { ChartSkeleton, EmptyState } from './ui-states';
 import { useWatchlist } from '@/hooks/use-watchlist';
 import { FINNHUB_CONFIG, isUSStockSymbol, sanitizeSymbol } from '@/lib/config';
 import { Star, Search } from 'lucide-react';
 import { toast } from 'sonner';
 
-// Dynamically lazy-load the heavy interactive PriceChart component
+// Dynamically lazy-load the interactive PriceChart component
 const DynamicPriceChart = dynamic(() => import('./price-chart').then((mod) => mod.PriceChart), {
   loading: () => <ChartSkeleton />,
   ssr: false,
@@ -85,7 +91,7 @@ export function DashboardShell({ initialSymbol }: DashboardShellProps) {
         />
 
         <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 space-y-6">
-          {/* Active Ticker Quick Header */}
+          {/* Active Ticker Analysis View */}
           {activeTab === 'overview' && (
             <>
               <div className="flex flex-wrap items-center justify-between gap-3">
@@ -109,7 +115,6 @@ export function DashboardShell({ initialSymbol }: DashboardShellProps) {
                     }`}
                   >
                     <Star className={`w-3.5 h-3.5 ${starred ? 'fill-current' : ''}`} />
-                    <span>{starred ? 'In Watchlist' : 'Watch'}</span>
                   </button>
                 </div>
 
@@ -141,10 +146,14 @@ export function DashboardShell({ initialSymbol }: DashboardShellProps) {
                 </div>
               )}
 
-              {/* Primary Chart + Quote + Profile Grid */}
+              {/* Primary Chart + Multi-Card Financials Grid */}
               <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
                 <div className="xl:col-span-8 space-y-6">
                   <DynamicPriceChart symbol={activeSymbol} />
+                  <CompanyPeersCard symbol={activeSymbol} onSelectPeer={handleSelectSymbol} />
+                  <GovPatentCard symbol={activeSymbol} />
+                  <FinancialsReportedCard symbol={activeSymbol} />
+                  <SecFilingsCard symbol={activeSymbol} />
                   <MarketNewsFeed symbol={activeSymbol} limit={6} />
                 </div>
 
@@ -155,6 +164,7 @@ export function DashboardShell({ initialSymbol }: DashboardShellProps) {
                   />
                   <CompanyProfileCard symbol={activeSymbol} />
                   <FinancialsCard symbol={activeSymbol} />
+                  <InsiderActivityCard symbol={activeSymbol} />
                   <AnalystRecommendationsCard symbol={activeSymbol} />
                   <EarningsSurprisesCard symbol={activeSymbol} />
                 </div>
@@ -225,6 +235,9 @@ export function DashboardShell({ initialSymbol }: DashboardShellProps) {
               <MarketNewsFeed limit={20} />
             </div>
           )}
+
+          {/* Market Calendars (Earnings, IPO, Holidays) */}
+          {activeTab === 'calendars' && <MarketCalendarsView />}
         </main>
       </div>
 

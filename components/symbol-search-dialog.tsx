@@ -153,9 +153,8 @@ export function SymbolSearchDialog({ isOpen, onClose, onSelectSymbol }: SymbolSe
         <div className="px-4 py-2 bg-slate-50 dark:bg-slate-800/40 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
           <span className="flex items-center gap-1.5">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-            Finnhub Free Plan: Covers US-listed stocks only
+            US-listed stocks only
           </span>
-          <span className="font-mono text-[10px] text-slate-400">REST API</span>
         </div>
 
         {/* Results or Recents */}
@@ -169,7 +168,7 @@ export function SymbolSearchDialog({ isOpen, onClose, onSelectSymbol }: SymbolSe
 
           {!isLoading && hasQuery && visibleResults.length === 0 && (
             <div className="py-8 text-center text-xs text-slate-500 dark:text-slate-400">
-              We couldn&apos;t find that symbol. Free data covers US stocks only.
+              We couldn&apos;t find that symbol. This covers US stocks only.
             </div>
           )}
 
