@@ -56,9 +56,6 @@ export function SecFilingsCard({ symbol }: SecFilingsCardProps) {
             SEC Filings &amp; Disclosures
           </h3>
         </div>
-        <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500">
-          EDGAR Free Feed
-        </span>
       </div>
 
       {filings.length === 0 ? (

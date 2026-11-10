@@ -17,7 +17,7 @@ export function Navbar({ onOpenSearch, showSearch = true }: NavbarProps) {
 
   return (
     <header className="sticky top-0 z-40 w-screen h-16 border-b border-slate-200/80 dark:border-slate-800/80 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md overflow-x-hidden">
-      <div className="h-full max-w-[1600px] mx-auto px-4 sm:px-6 flex items-center justify-between gap-4">
+      <div className="h-full max-w-[1600px] mx-auto px-4 flex items-center justify-between gap-4">
         {/* Left: Brand & Market Status */}
         <div className="flex items-center gap-4">
           <Link href="/" className="flex items-center gap-2.5 group">

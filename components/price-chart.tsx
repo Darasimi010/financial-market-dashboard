@@ -17,12 +17,12 @@ export function PriceChart({ symbol, currentPrice }: PriceChartProps) {
             <span className="text-xl font-bold font-mono text-slate-900 dark:text-white">
               {symbol} Price Chart
             </span>
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+            {/* <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
               Premium Feature
-            </span>
+            </span> */}
           </div>
           <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-            This API endpoint is restricted to Premium subscribers only.
+            Candlestick charts is restricted to paid subscribers only.
           </p>
         </div>
         <div className="flex items-center gap-2 text-xs font-semibold text-slate-700 dark:text-slate-300">
@@ -38,13 +38,11 @@ export function PriceChart({ symbol, currentPrice }: PriceChartProps) {
           <Lock className="w-7 h-7" />
         </div>
         <div className="max-w-md space-y-1.5">
-          <h4 className="text-base font-bold text-slate-100">
-            Candle Chart Behind Finnhub Paywall
-          </h4>
+          <h4 className="text-base font-bold text-slate-100">Candle Chart Behind Paywall</h4>
           <p className="text-xs text-slate-400 leading-relaxed">
-            Historical OHLCV candle streams require a Finnhub All-In-One subscription. All free APIs
-            (real-time quotes, financials, filings, senate lobbying, USPTO patents, crypto, forex,
-            and news) remain fully functional and unlimited on this dashboard.
+            Historical OHLCV candle streams require a paid subscription. All free APIs (real-time
+            quotes, financials, filings, senate lobbying, USPTO patents, crypto, forex, and news)
+            remain fully functional and unlimited on this dashboard.
           </p>
         </div>
 
@@ -63,11 +61,11 @@ export function PriceChart({ symbol, currentPrice }: PriceChartProps) {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center text-xs">
         <div className="p-3 rounded-lg bg-slate-100/50 dark:bg-slate-800/40 border border-slate-200/50 dark:border-slate-800">
           <div className="text-[10px] text-slate-400 uppercase font-mono">Real-Time Quote</div>
-          <div className="font-bold text-emerald-500 mt-0.5">Free &amp; Live</div>
+          <div className="font-bold text-emerald-500 mt-0.5">Included Free</div>
         </div>
         <div className="p-3 rounded-lg bg-slate-100/50 dark:bg-slate-800/40 border border-slate-200/50 dark:border-slate-800">
           <div className="text-[10px] text-slate-400 uppercase font-mono">Financials &amp; SEC</div>
-          <div className="font-bold text-emerald-500 mt-0.5">100% Free</div>
+          <div className="font-bold text-emerald-500 mt-0.5">Included Free</div>
         </div>
         <div className="p-3 rounded-lg bg-slate-100/50 dark:bg-slate-800/40 border border-slate-200/50 dark:border-slate-800">
           <div className="text-[10px] text-slate-400 uppercase font-mono">Gov &amp; Patents</div>

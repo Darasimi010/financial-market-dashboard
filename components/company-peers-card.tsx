@@ -57,9 +57,6 @@ export function CompanyPeersCard({ symbol, onSelectPeer }: CompanyPeersCardProps
             Industry Peers &amp; Competitors
           </h3>
         </div>
-        <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500">
-          Free Peer Engine
-        </span>
       </div>
 
       {filteredPeers.length === 0 ? (
@@ -73,7 +70,6 @@ export function CompanyPeersCard({ symbol, onSelectPeer }: CompanyPeersCardProps
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100/80 dark:bg-slate-800/60 hover:bg-emerald-500/15 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-200/80 dark:border-slate-700/60 text-xs font-mono font-bold transition text-slate-700 dark:text-slate-200"
             >
               <span>{peer}</span>
-              <ArrowRight className="w-3 h-3 text-slate-400" />
             </button>
           ))}
         </div>

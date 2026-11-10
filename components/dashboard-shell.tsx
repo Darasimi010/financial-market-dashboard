@@ -115,7 +115,6 @@ export function DashboardShell({ initialSymbol }: DashboardShellProps) {
                     }`}
                   >
                     <Star className={`w-3.5 h-3.5 ${starred ? 'fill-current' : ''}`} />
-                    <span>{starred ? 'In Watchlist' : 'Watch'}</span>
                   </button>
                 </div>
 
