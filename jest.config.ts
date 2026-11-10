@@ -33,10 +33,12 @@ const esmPackages = [
   'cookie',
 ];
 
-export default async (): Promise<Config> => {
+const jestConfig = async (): Promise<Config> => {
   const config = await createJestConfig(customConfig)();
   return {
     ...config,
     transformIgnorePatterns: [`/node_modules/(?!(?:\\.pnpm/)?(?:${esmPackages.join('|')})[/@+])`],
   };
 };
+
+export default jestConfig;

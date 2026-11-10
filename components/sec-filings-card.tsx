@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FinnhubFilingItem } from '@/lib/finnhub/schemas';
 import { CardSkeleton, ErrorState } from './ui-states';
 import { FileText, ExternalLink, Calendar, ShieldCheck } from 'lucide-react';
@@ -13,10 +13,11 @@ export function SecFilingsCard({ symbol }: SecFilingsCardProps) {
   const [filings, setFilings] = useState<FinnhubFilingItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const fetchIdRef = useRef(0);
 
   useEffect(() => {
     let cancelled = false;
-    setIsLoading(true);
+    const fetchId = ++fetchIdRef.current;
 
     fetch(`/api/sec-filings?symbol=${encodeURIComponent(symbol)}`)
       .then((res) => {
@@ -24,18 +25,18 @@ export function SecFilingsCard({ symbol }: SecFilingsCardProps) {
         return res.json();
       })
       .then((json) => {
-        if (!cancelled) {
+        if (!cancelled && fetchId === fetchIdRef.current) {
           setFilings(json.data || []);
           setError(null);
         }
       })
       .catch((err: unknown) => {
-        if (!cancelled) {
+        if (!cancelled && fetchId === fetchIdRef.current) {
           setError(err instanceof Error ? err.message : 'Error fetching filings');
         }
       })
       .finally(() => {
-        if (!cancelled) setIsLoading(false);
+        if (!cancelled && fetchId === fetchIdRef.current) setIsLoading(false);
       });
 
     return () => {

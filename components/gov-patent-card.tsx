@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   FinnhubPatentItem,
   FinnhubVisaItem,
@@ -24,10 +24,11 @@ export function GovPatentCard({ symbol }: GovPatentCardProps) {
   const [spending, setSpending] = useState<FinnhubSpendingItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const fetchIdRef = useRef(0);
 
   useEffect(() => {
     let cancelled = false;
-    setIsLoading(true);
+    const fetchId = ++fetchIdRef.current;
 
     Promise.all([
       fetch(`/api/visas?symbol=${encodeURIComponent(symbol)}`).then((r) => r.json()),
@@ -40,7 +41,7 @@ export function GovPatentCard({ symbol }: GovPatentCardProps) {
       ),
     ])
       .then(([visaJson, spendJson, patentJson, lobbJson]) => {
-        if (!cancelled) {
+        if (!cancelled && fetchId === fetchIdRef.current) {
           setVisas(visaJson.data || []);
           setSpending(spendJson.data || []);
           setPatents(patentJson.data || []);
@@ -49,12 +50,12 @@ export function GovPatentCard({ symbol }: GovPatentCardProps) {
         }
       })
       .catch((err: unknown) => {
-        if (!cancelled) {
+        if (!cancelled && fetchId === fetchIdRef.current) {
           setError(err instanceof Error ? err.message : 'Error fetching government data');
         }
       })
       .finally(() => {
-        if (!cancelled) setIsLoading(false);
+        if (!cancelled && fetchId === fetchIdRef.current) setIsLoading(false);
       });
 
     return () => {

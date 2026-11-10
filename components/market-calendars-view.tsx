@@ -1,7 +1,11 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { FinnhubEarningsCalendarItem, FinnhubIpoItem, FinnhubMarketHolidayItem } from '@/lib/finnhub/schemas';
+import { useState, useEffect, useRef } from 'react';
+import {
+  FinnhubEarningsCalendarItem,
+  FinnhubIpoItem,
+  FinnhubMarketHolidayItem,
+} from '@/lib/finnhub/schemas';
 import { CardSkeleton, ErrorState } from './ui-states';
 import { Calendar, Rocket, SunMedium, Clock } from 'lucide-react';
 
@@ -14,10 +18,11 @@ export function MarketCalendarsView() {
   const [holidays, setHolidays] = useState<FinnhubMarketHolidayItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const fetchIdRef = useRef(0);
 
   useEffect(() => {
     let cancelled = false;
-    setIsLoading(true);
+    const fetchId = ++fetchIdRef.current;
 
     Promise.all([
       fetch('/api/earnings-calendar').then((r) => r.json()),
@@ -25,7 +30,7 @@ export function MarketCalendarsView() {
       fetch('/api/market-holiday?exchange=US').then((r) => r.json()),
     ])
       .then(([earnJson, ipoJson, holiJson]) => {
-        if (!cancelled) {
+        if (!cancelled && fetchId === fetchIdRef.current) {
           setEarnings(earnJson.data || []);
           setIpos(ipoJson.data || []);
           setHolidays(holiJson.data || []);
@@ -33,12 +38,12 @@ export function MarketCalendarsView() {
         }
       })
       .catch((err: unknown) => {
-        if (!cancelled) {
+        if (!cancelled && fetchId === fetchIdRef.current) {
           setError(err instanceof Error ? err.message : 'Error fetching calendar feeds');
         }
       })
       .finally(() => {
-        if (!cancelled) setIsLoading(false);
+        if (!cancelled && fetchId === fetchIdRef.current) setIsLoading(false);
       });
 
     return () => {
@@ -57,7 +62,8 @@ export function MarketCalendarsView() {
             Market Schedules &amp; Calendars
           </h1>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Real-time corporate earnings releases, upcoming IPO offerings, and exchange holiday closures.
+            Real-time corporate earnings releases, upcoming IPO offerings, and exchange holiday
+            closures.
           </p>
         </div>
 
@@ -125,18 +131,24 @@ export function MarketCalendarsView() {
                   </div>
                   <div>
                     <span className="text-slate-400 text-[10px] block">Fiscal Quarter</span>
-                    <span className="font-mono font-semibold">Q{e.quarter || '1'} {e.year || ''}</span>
+                    <span className="font-mono font-semibold">
+                      Q{e.quarter || '1'} {e.year || ''}
+                    </span>
                   </div>
                   <div>
                     <span className="text-slate-400 text-[10px] block">EPS Est.</span>
                     <span className="font-mono font-semibold">
-                      {e.epsEstimate !== null && e.epsEstimate !== undefined ? `$${e.epsEstimate.toFixed(2)}` : 'N/A'}
+                      {e.epsEstimate !== null && e.epsEstimate !== undefined
+                        ? `$${e.epsEstimate.toFixed(2)}`
+                        : 'N/A'}
                     </span>
                   </div>
                   <div>
                     <span className="text-slate-400 text-[10px] block">EPS Actual</span>
                     <span className="font-mono font-semibold text-emerald-500">
-                      {e.epsActual !== null && e.epsActual !== undefined ? `$${e.epsActual.toFixed(2)}` : 'Pending'}
+                      {e.epsActual !== null && e.epsActual !== undefined
+                        ? `$${e.epsActual.toFixed(2)}`
+                        : 'Pending'}
                     </span>
                   </div>
                 </div>
@@ -225,4 +237,3 @@ export function MarketCalendarsView() {
     </div>
   );
 }
-

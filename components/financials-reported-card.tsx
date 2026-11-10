@@ -1,9 +1,16 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FinnhubFinancialsReportedItem } from '@/lib/finnhub/schemas';
 import { CardSkeleton, ErrorState } from './ui-states';
 import { Landmark, TrendingUp, DollarSign } from 'lucide-react';
+
+interface ReportLineItem {
+  label?: string;
+  concept?: string;
+  value?: string | number;
+  unit?: string;
+}
 
 interface FinancialsReportedCardProps {
   symbol: string;
@@ -13,10 +20,11 @@ export function FinancialsReportedCard({ symbol }: FinancialsReportedCardProps) 
   const [reports, setReports] = useState<FinnhubFinancialsReportedItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const fetchIdRef = useRef(0);
 
   useEffect(() => {
     let cancelled = false;
-    setIsLoading(true);
+    const fetchId = ++fetchIdRef.current;
 
     fetch(`/api/financials-reported?symbol=${encodeURIComponent(symbol)}`)
       .then((res) => {
@@ -24,18 +32,18 @@ export function FinancialsReportedCard({ symbol }: FinancialsReportedCardProps) 
         return res.json();
       })
       .then((json) => {
-        if (!cancelled) {
+        if (!cancelled && fetchId === fetchIdRef.current) {
           setReports(json.data || []);
           setError(null);
         }
       })
       .catch((err: unknown) => {
-        if (!cancelled) {
+        if (!cancelled && fetchId === fetchIdRef.current) {
           setError(err instanceof Error ? err.message : 'Error fetching financials as reported');
         }
       })
       .finally(() => {
-        if (!cancelled) setIsLoading(false);
+        if (!cancelled && fetchId === fetchIdRef.current) setIsLoading(false);
       });
 
     return () => {
@@ -47,8 +55,8 @@ export function FinancialsReportedCard({ symbol }: FinancialsReportedCardProps) 
   if (error) return <ErrorState message={error} />;
 
   const latest = reports[0];
-  const bsItems: any[] = latest?.report?.bs || [];
-  const icItems: any[] = latest?.report?.ic || [];
+  const bsItems: ReportLineItem[] = (latest?.report?.bs as ReportLineItem[]) || [];
+  const icItems: ReportLineItem[] = (latest?.report?.ic as ReportLineItem[]) || [];
 
   return (
     <div className="rounded-2xl border border-slate-200 dark:border-slate-800/80 bg-white/70 dark:bg-slate-900/60 backdrop-blur-md p-5 shadow-xs transition">

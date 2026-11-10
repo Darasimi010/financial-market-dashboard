@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { FinnhubInsiderTransactionItem, FinnhubInsiderSentimentItem } from '@/lib/finnhub/schemas';
 import { CardSkeleton, ErrorState } from './ui-states';
 import { Users, TrendingDown, TrendingUp } from 'lucide-react';
@@ -14,29 +14,30 @@ export function InsiderActivityCard({ symbol }: InsiderActivityCardProps) {
   const [sentiments, setSentiments] = useState<FinnhubInsiderSentimentItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const fetchIdRef = useRef(0);
 
   useEffect(() => {
     let cancelled = false;
-    setIsLoading(true);
+    const fetchId = ++fetchIdRef.current;
 
     Promise.all([
       fetch(`/api/insider-transactions?symbol=${encodeURIComponent(symbol)}`).then((r) => r.json()),
       fetch(`/api/insider-sentiment?symbol=${encodeURIComponent(symbol)}`).then((r) => r.json()),
     ])
       .then(([txJson, sentJson]) => {
-        if (!cancelled) {
+        if (!cancelled && fetchId === fetchIdRef.current) {
           setTransactions(txJson.data || []);
           setSentiments(sentJson.data || []);
           setError(null);
         }
       })
       .catch((err: unknown) => {
-        if (!cancelled) {
+        if (!cancelled && fetchId === fetchIdRef.current) {
           setError(err instanceof Error ? err.message : 'Error loading insider data');
         }
       })
       .finally(() => {
-        if (!cancelled) setIsLoading(false);
+        if (!cancelled && fetchId === fetchIdRef.current) setIsLoading(false);
       });
 
     return () => {

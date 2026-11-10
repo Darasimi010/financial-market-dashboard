@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { CardSkeleton, ErrorState } from './ui-states';
 import { ArrowRight } from 'lucide-react';
 
@@ -13,10 +13,11 @@ export function CompanyPeersCard({ symbol, onSelectPeer }: CompanyPeersCardProps
   const [peers, setPeers] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const fetchIdRef = useRef(0);
 
   useEffect(() => {
     let cancelled = false;
-    setIsLoading(true);
+    const fetchId = ++fetchIdRef.current;
 
     fetch(`/api/peers?symbol=${encodeURIComponent(symbol)}`)
       .then((res) => {
@@ -24,18 +25,18 @@ export function CompanyPeersCard({ symbol, onSelectPeer }: CompanyPeersCardProps
         return res.json();
       })
       .then((json) => {
-        if (!cancelled) {
+        if (!cancelled && fetchId === fetchIdRef.current) {
           setPeers(json.data || []);
           setError(null);
         }
       })
       .catch((err: unknown) => {
-        if (!cancelled) {
+        if (!cancelled && fetchId === fetchIdRef.current) {
           setError(err instanceof Error ? err.message : 'Error fetching peers');
         }
       })
       .finally(() => {
-        if (!cancelled) setIsLoading(false);
+        if (!cancelled && fetchId === fetchIdRef.current) setIsLoading(false);
       });
 
     return () => {
