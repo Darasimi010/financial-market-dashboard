@@ -25,7 +25,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'Finnhub Market Dashboard',
+  title: 'MarketDash - Financial Market Dashboard',
   description:
     'Progressive Web App for tracking US stock market data with live quotes, interactive charts, company profiles, and market news powered by the Finnhub REST API.',
   manifest: '/manifest.webmanifest',
@@ -39,14 +39,14 @@ export const metadata: Metadata = {
     apple: '/apple-touch-icon.png',
   },
   openGraph: {
-    title: 'Finnhub Market Dashboard',
+    title: 'MarketDash - Financial Market Dashboard',
     description:
       'Progressive Web App for tracking US stock market data with live quotes, interactive charts, company profiles, and market news powered by the Finnhub REST API.',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Finnhub Market Dashboard',
+    title: 'MarketDash - Financial Market Dashboard',
     description:
       'Progressive Web App for tracking US stock market data with live quotes, interactive charts, company profiles, and market news powered by the Finnhub REST API.',
   },
@@ -79,9 +79,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 antialiased selection:bg-emerald-500/20 selection:text-emerald-600 dark:selection:text-emerald-400"
       >
         <ThemeProvider>
-          <ClientErrorBoundary>
-            {children}
-          </ClientErrorBoundary>
+          <ClientErrorBoundary>{children}</ClientErrorBoundary>
           <OfflineIndicator />
           <Toaster position="bottom-right" richColors closeButton />
         </ThemeProvider>
@@ -89,4 +87,3 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   );
 }
-
