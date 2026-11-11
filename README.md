@@ -1,13 +1,12 @@
 # MarketDash — Finnhub US Financial Market Dashboard
 
-[![CI](https://github.com/omojola/financial-market-dashboard/actions/workflows/ci.yml/badge.svg)](https://github.com/omojola/financial-market-dashboard/actions/workflows/ci.yml)
+[![CI](https://img.shields.io/badge/CI?logo=github-actions)](https://github.com/)
 [![Next.js](https://img.shields.io/badge/Next.js-16.4.3-black?logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19.3.0-blue?logo=react)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38bdf8?logo=tailwindcss)](https://tailwindcss.com/)
 [![Jest](https://img.shields.io/badge/Tested_with-Jest-c21325?logo=jest)](https://jestjs.io/)
 [![PWA](https://img.shields.io/badge/PWA-Serwist-green?logo=pwa)](https://serwist.pages.dev/)
-[![License](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
 
 An enterprise-ready, offline-first Progressive Web App (PWA) for real-time tracking, charting, and fundamental analysis of US equity markets. Built with **Next.js 16 (App Router)**, **React 19**, **Tailwind CSS v4**, and **Serwist**, strictly leveraging the **Finnhub Free REST API** with robust rate-limiting, server-side credential isolation, and automated fallback capabilities.
 
